@@ -1,19 +1,7 @@
 # Architecture
 
-The system will consist of:
+This file was created with a misspelled filename during the initial repository bootstrap.
 
-1. Data layer
-- PostgreSQL database
-- pgvector for embeddings
+The maintained architecture document is now:
 
-2. Ingestion layer
-- Python scripts for data import
-- future: API connectors
-
-3. AI layer
-- Ollama (local LLM)
-- embedding generation
-- semantic search
-
-4. Interface layer
-- future: simple web UI or CLI
+[architecture.md](architecture.md)
