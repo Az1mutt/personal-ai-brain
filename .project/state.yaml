@@ -6,64 +6,67 @@ project:
   owner: "Project OS & Agent Architecture chat"
 
 status: "active"
-phase: "core-agent-v0.1-bootstrap"
+phase: "core-agent-v0.1-real-data-validation"
 
 current_gate: >
-  Prove that a local read-only Core Agent can load the real Project OS map and
-  states from GitHub, validate them deterministically, and generate a useful
-  consolidated report without manual delta transport or state writes.
+  Run the merged read-only Core Agent against the real private Project OS
+  repository and verify that discovery, YAML parsing, attention handling and
+  report generation work end to end on live state.
 
 current_state: >
-  The repository is being upgraded from an early local knowledge/RAG concept
-  into a broader personal agent platform. The original PostgreSQL/pgvector/
-  Ollama idea is retained as a future Memory & Knowledge subsystem. Core Agent
-  v0.1 now has a Python package, a deliberately read-only GitHub Contents API
-  adapter, Project OS discovery/validation logic, a CLI report command and
-  automated tests. The agent does not use an LLM and cannot write GitHub state
-  in v0.1.
+  Core Agent v0.1 is implemented and merged to main. The repository now contains
+  a Python package, CLI, read-only GitHub Contents API adapter, Project OS
+  discovery/validation logic, Markdown reporting, tests, CI, architecture/vision
+  docs and this Project State. GitHub Actions test run #1 completed successfully
+  on 2026-09-09. The agent intentionally has no GitHub write methods, no LLM
+  planner, no scheduler and no database dependency yet. The earlier PostgreSQL/
+  pgvector/Ollama concept remains reserved as a future Memory & Knowledge
+  subsystem of the broader multi-agent platform.
 
 exact_next_action: >
-  Merge the Core Agent v0.1 bootstrap, then run the CLI against the real private
-  personal-project-brain repository using a read-capable GITHUB_TOKEN. Validate
-  the generated report and fix any schema/discovery mismatches before deploying
-  the agent to the Homelab runtime.
+  Run `personal-ai-brain core-report` against
+  Az1mutt/personal-project-brain using a read-capable GITHUB_TOKEN, inspect the
+  generated live report, and fix any real-schema/discovery mismatches before
+  persistent Homelab deployment.
 
 blockers:
   - >
-      A runtime with a read-capable GitHub token is required to exercise the
-      private personal-project-brain repository end to end.
+      A runtime with a read-capable GitHub token is required for the first
+      end-to-end run against the private personal-project-brain repository.
   - >
-      Homelab migration closure should complete before the agent is deployed as
-      a persistent service there; local/manual execution can happen earlier.
+      Persistent Homelab service deployment should wait for formal Homelab
+      migration closure, although manual/local execution can happen before that.
 
 dependencies:
   - project: "Personal Project Brain / Project OS"
     dependency: "Provides core/project-map.yaml and durable Project/Workstream States."
   - project: "Homelab & Media Stack"
-    dependency: "Future persistent runtime host after migration closure."
+    dependency: "Preferred persistent runtime host after migration closure."
 
 important_open_loops:
-  - "Run Core Agent v0.1 against the real private Project OS state."
-  - "Decide the narrow Homelab deployment shape after migration closure."
-  - "Add deterministic project-rollup derivation/validation after the read path is proven."
-  - "Add scheduling/triggering after manual CLI execution is stable."
-  - "Add Repo Steward and Career Evidence agents only after the Core Agent boundary is proven."
-  - "Add an LLM/planner layer only where semantic judgment adds value."
-  - "Retain PostgreSQL/pgvector/Ollama as a future Memory & Knowledge subsystem rather than a v0.1 dependency."
+  - "Run Core Agent v0.1 against live private Project OS state."
+  - "Fix any live schema/discovery mismatches found by that run."
+  - "Add deterministic project-rollup derivation/validation in v0.2."
+  - "Package/deploy to Homelab after migration closure."
+  - "Add scheduling/triggering only after manual CLI execution is stable."
+  - "Add Repo Steward and Career Evidence agents after the Core Agent boundary is proven."
+  - "Add LLM/planner/orchestrator layers only where semantic judgment adds value."
+  - "Retain PostgreSQL/pgvector/Ollama as a future Memory & Knowledge subsystem."
 
 portfolio:
   milestone: true
   signal: >
-    First implementation milestone for a local-first personal multi-agent
+    First working implementation milestone for a local-first personal multi-agent
     platform: deterministic Project OS discovery, read-only GitHub integration,
-    state validation and CLI reporting with test coverage and explicit autonomy
-    boundaries.
+    state integrity checks, attention-aware reporting, CLI packaging and CI test
+    coverage with explicit autonomy boundaries.
 
 verification:
   last_verified: "2026-09-09"
   sources:
-    - "personal-ai-brain branch agent-platform/core-agent-v0.1"
-    - "Project OS v0.2 Core refresh proving GitHub-based state transport"
+    - "personal-ai-brain PR #1: Bootstrap Core Agent v0.1"
+    - "GitHub Actions workflow tests run #1: success"
+    - "main merge commit 6fc0b993448773b3212fc3ae7d58676450bda72f"
 
 sync:
   status: "synced"
