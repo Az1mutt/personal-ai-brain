@@ -18,7 +18,8 @@ owned Project / Workstream State
 GitHub
     ↓
 Core Agent
-    ├─ integrity checks
+    ├─ schema + freshness validation
+    ├─ integrity/conflict checks
     ├─ rollup proposals
     └─ machine-readable snapshot
     ↓
@@ -46,6 +47,8 @@ Implemented:
 - discovery through `personal-project-brain/core/project-map.yaml`;
 - support for project rollups and specialist workstream states;
 - deterministic validation of missing, stale and unsynchronized state;
+- Project State v0.2 schema/type/storage validation;
+- attention-aware freshness policy with per-project override support;
 - multi-workstream rollup integrity/conflict detection;
 - deterministic read-only rollup proposals;
 - machine-readable JSON/YAML Core snapshots;
@@ -55,6 +58,8 @@ Implemented:
 - automated tests and CI.
 
 The rollup proposal layer intentionally refuses to invent a shared narrative when multiple blocking workstreams are active. In that case it proposes only unambiguous structural/freshness fields and marks semantic synthesis as required.
+
+Freshness is also intentionally attention-aware: active work is checked more aggressively, while deferred/parked/future work does not generate stale-warning noise merely because it is old.
 
 Explicitly **not** implemented yet:
 
@@ -78,6 +83,25 @@ personal-ai-brain agents show core-agent
 ```
 
 See [Agent Contract v0.1](docs/agent-contract.md).
+
+## Project State quality
+
+Built-in freshness defaults match [`config/freshness-policy.yaml`](config/freshness-policy.yaml).
+
+Use an explicit policy file when desired:
+
+```bash
+personal-ai-brain core-report \
+  --freshness-policy config/freshness-policy.yaml
+
+personal-ai-brain core-snapshot \
+  --freshness-policy config/freshness-policy.yaml \
+  --format json
+```
+
+Project Map entries may override freshness with `freshness_days`, including `null` to disable freshness checking for a specific entry.
+
+See [Project State Quality v0.2](docs/state-quality.md).
 
 ## Quick start
 
@@ -122,11 +146,13 @@ Do not commit tokens or other secrets.
 ```text
 .project/                         Project OS state for this project
 agents/                           declarative agent contracts
+config/                           deterministic runtime/policy configuration
 src/personal_ai_brain/            Python package
 tests/                            deterministic unit tests
 docs/vision.md                    long-term destination
 docs/architecture.md              architecture and boundaries
 docs/agent-contract.md            agent permission/contract model
+docs/state-quality.md             Project State schema/freshness rules
 docs/roadmap.md                   staged implementation plan
 database/                         reserved for future memory/state services
 docker/                           reserved for Homelab deployment
@@ -143,7 +169,8 @@ docker/                           reserved for Homelab deployment
 7. **Agents should coordinate through explicit state/events, not hidden assumptions.**
 8. **Capability and permission are separate: a tool existing does not imply an agent may use it.**
 9. **A proposal is not permission to write.**
-10. **The sci-fi version is allowed — after every autonomy boundary has earned its way in.**
+10. **Freshness is a policy signal, not a claim that project content is wrong.**
+11. **The sci-fi version is allowed — after every autonomy boundary has earned its way in.**
 
 ## Memory / RAG
 
