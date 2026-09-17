@@ -1,12 +1,18 @@
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from pathlib import Path
+from typing import Any
+
+import yaml
 
 from personal_ai_brain.agent_registry import AgentRegistry, AgentRegistryError
 from personal_ai_brain.core_agent import CoreAgent, Finding
 from personal_ai_brain.github_reader import GitHubReader
+from personal_ai_brain.machine_snapshot import build_machine_snapshot
+from personal_ai_brain.rollup_proposal import RollupProposalEngine
 from personal_ai_brain.state_integrity import StateIntegrityChecker
 
 
@@ -18,12 +24,7 @@ def build_parser() -> argparse.ArgumentParser:
         "core-report",
         help="Read Project OS state from GitHub and render a Core report.",
     )
-    report.add_argument(
-        "--central-repo",
-        default="Az1mutt/personal-project-brain",
-        help="Repository containing core/project-map.yaml.",
-    )
-    report.add_argument("--ref", default="main")
+    _add_core_source_arguments(report)
     report.add_argument(
         "--output",
         type=Path,
@@ -34,6 +35,20 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Exit non-zero when warnings are present.",
     )
+
+    snapshot = subparsers.add_parser(
+        "core-snapshot",
+        help="Render machine-readable Core state for automation/orchestration.",
+    )
+    _add_core_source_arguments(snapshot)
+    _add_structured_output_arguments(snapshot, default_format="json")
+
+    proposals = subparsers.add_parser(
+        "rollup-proposals",
+        help="Generate deterministic read-only project rollup proposals.",
+    )
+    _add_core_source_arguments(proposals)
+    _add_structured_output_arguments(proposals, default_format="yaml")
 
     agents = subparsers.add_parser(
         "agents",
@@ -58,6 +73,32 @@ def build_parser() -> argparse.ArgumentParser:
     )
 
     return parser
+
+
+def _add_core_source_arguments(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "--central-repo",
+        default="Az1mutt/personal-project-brain",
+        help="Repository containing core/project-map.yaml.",
+    )
+    parser.add_argument("--ref", default="main")
+
+
+def _add_structured_output_arguments(
+    parser: argparse.ArgumentParser,
+    *,
+    default_format: str,
+) -> None:
+    parser.add_argument(
+        "--format",
+        choices=("json", "yaml"),
+        default=default_format,
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        help="Optional output file. Prints to stdout when omitted.",
+    )
 
 
 def _load_registry(directory: Path) -> AgentRegistry:
@@ -87,46 +128,96 @@ def _print_agent(contract) -> None:
     print(f"write resources: {len(contract.resources.writes)}")
 
 
+def _collect_core(
+    *,
+    central_repo: str,
+    ref: str,
+):
+    reader = GitHubReader()
+    agent = CoreAgent(
+        reader,
+        central_repository=central_repo,
+        ref=ref,
+    )
+    snapshot = agent.collect()
+
+    integrity = StateIntegrityChecker(
+        reader,
+        central_repository=central_repo,
+        ref=ref,
+    ).check()
+    snapshot.findings.extend(
+        Finding(
+            finding.severity,
+            finding.code,
+            finding.subject,
+            finding.message,
+        )
+        for finding in integrity.findings
+    )
+
+    proposals = RollupProposalEngine(
+        reader,
+        central_repository=central_repo,
+        ref=ref,
+    ).propose()
+    return agent, snapshot, proposals
+
+
+def _render_structured(value: Any, output_format: str) -> str:
+    if output_format == "json":
+        return json.dumps(value, indent=2, sort_keys=False) + "\n"
+    return yaml.safe_dump(value, sort_keys=False, allow_unicode=True)
+
+
+def _write_or_print(text: str, output: Path | None) -> None:
+    if output:
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(text, encoding="utf-8")
+        print(f"Wrote {output}")
+    else:
+        print(text, end="")
+
+
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
 
     if args.command == "core-report":
-        reader = GitHubReader()
-        agent = CoreAgent(
-            reader,
-            central_repository=args.central_repo,
+        agent, snapshot, _ = _collect_core(
+            central_repo=args.central_repo,
             ref=args.ref,
         )
-        snapshot = agent.collect()
-
-        integrity = StateIntegrityChecker(
-            reader,
-            central_repository=args.central_repo,
-            ref=args.ref,
-        ).check()
-        snapshot.findings.extend(
-            Finding(
-                finding.severity,
-                finding.code,
-                finding.subject,
-                finding.message,
-            )
-            for finding in integrity.findings
-        )
-
         report = agent.render_markdown(snapshot)
-
-        if args.output:
-            args.output.parent.mkdir(parents=True, exist_ok=True)
-            args.output.write_text(report, encoding="utf-8")
-            print(f"Wrote {args.output}")
-        else:
-            print(report, end="")
+        _write_or_print(report, args.output)
 
         if snapshot.errors:
             return 2
         if args.strict and snapshot.warnings:
             return 1
+        return 0
+
+    if args.command == "core-snapshot":
+        _, snapshot, proposals = _collect_core(
+            central_repo=args.central_repo,
+            ref=args.ref,
+        )
+        payload = build_machine_snapshot(snapshot, proposals)
+        _write_or_print(_render_structured(payload, args.format), args.output)
+        return 2 if snapshot.errors else 0
+
+    if args.command == "rollup-proposals":
+        reader = GitHubReader()
+        proposals = RollupProposalEngine(
+            reader,
+            central_repository=args.central_repo,
+            ref=args.ref,
+        ).propose()
+        payload = {
+            "schema_version": "0.1",
+            "proposal_count": len(proposals),
+            "proposals": [proposal.to_dict() for proposal in proposals],
+        }
+        _write_or_print(_render_structured(payload, args.format), args.output)
         return 0
 
     if args.command == "agents":

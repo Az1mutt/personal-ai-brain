@@ -2,7 +2,7 @@
 
 A local-first personal agent platform for coordinating Igor's projects, tools, knowledge and future autonomous workflows.
 
-The long-term target is a real multi-agent system. The first implementation is intentionally smaller: a **read-only Core Agent** that consumes Project OS state from GitHub and produces a deterministic cross-project view.
+The long-term target is a real multi-agent system. The current implementation stays deliberately conservative: read-only agents consume durable Project OS state, validate it deterministically and expose structured outputs before any autonomous write path is introduced.
 
 ## Why this exists
 
@@ -18,6 +18,9 @@ owned Project / Workstream State
 GitHub
     ↓
 Core Agent
+    ├─ integrity checks
+    ├─ rollup proposals
+    └─ machine-readable snapshot
     ↓
 cross-project health / gates / next actions
 ```
@@ -35,7 +38,7 @@ Project State → Core ──┼─ Homelab Agent
                        orchestrated actions
 ```
 
-## Core Agent v0.1
+## Core Agent
 
 Implemented:
 
@@ -43,26 +46,28 @@ Implemented:
 - discovery through `personal-project-brain/core/project-map.yaml`;
 - support for project rollups and specialist workstream states;
 - deterministic validation of missing, stale and unsynchronized state;
+- multi-workstream rollup integrity/conflict detection;
+- deterministic read-only rollup proposals;
+- machine-readable JSON/YAML Core snapshots;
 - distinction between active, background, deferred, parked and future work;
 - Markdown Core report generation;
 - CLI;
-- automated tests.
+- automated tests and CI.
 
-Explicitly **not** implemented in v0.1:
+The rollup proposal layer intentionally refuses to invent a shared narrative when multiple blocking workstreams are active. In that case it proposes only unambiguous structural/freshness fields and marks semantic synthesis as required.
 
-- GitHub writes;
-- LLM planning;
+Explicitly **not** implemented yet:
+
+- GitHub writes from Core Agent;
+- LLM planning/synthesis;
 - autonomous project actions;
-- persistent scheduler;
-- database;
-- vector memory;
+- persistent scheduler/runtime;
+- database/vector memory;
 - multi-agent orchestration.
-
-Those are future layers, not prerequisites for proving the read path.
 
 ## Agent Contract + Registry
 
-The platform now also has a declarative boundary for agents. Agent manifests live under `agents/` and define responsibility, inputs/outputs, tool permissions, readable/writable resources, approval boundaries and future event contracts.
+Agent manifests live under `agents/` and define responsibility, inputs/outputs, tool permissions, readable/writable resources, approval boundaries and future event contracts.
 
 Core Agent is the first registered agent and remains strictly `read_only`.
 
@@ -90,10 +95,18 @@ export GITHUB_TOKEN="..."
 personal-ai-brain core-report
 ```
 
-Write a report to disk:
+Generate machine-readable state for future automation/orchestration:
 
 ```bash
-personal-ai-brain core-report --output reports/core.md
+personal-ai-brain core-snapshot --format json --output reports/core.json
+personal-ai-brain core-snapshot --format yaml --output reports/core.yaml
+```
+
+Inspect deterministic rollup proposals without writing them:
+
+```bash
+personal-ai-brain rollup-proposals
+personal-ai-brain rollup-proposals --format json
 ```
 
 Run tests:
@@ -129,7 +142,8 @@ docker/                           reserved for Homelab deployment
 6. **Durable state lives outside chat memory.**
 7. **Agents should coordinate through explicit state/events, not hidden assumptions.**
 8. **Capability and permission are separate: a tool existing does not imply an agent may use it.**
-9. **The sci-fi version is allowed — after every autonomy boundary has earned its way in.**
+9. **A proposal is not permission to write.**
+10. **The sci-fi version is allowed — after every autonomy boundary has earned its way in.**
 
 ## Memory / RAG
 
