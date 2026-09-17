@@ -38,7 +38,7 @@ Implemented and merged:
 
 ### v0.2b — Project rollups and state integrity
 
-Current implementation scope:
+Implemented:
 
 - validate multi-workstream project rollup shape
 - detect root/workstream path drift against the Project Map
@@ -47,15 +47,18 @@ Current implementation scope:
 - detect `synced` rollups sitting above unsynchronized active child states
 - detect hard status contradictions such as a completed project with an active workstream
 - feed integrity findings into the normal `core-report`
+- deterministic read-only rollup proposals
+- refuse deterministic narrative synthesis when multiple blocking workstreams are active
+- machine-readable Core snapshot output in JSON/YAML
+- CLI output for rollup proposals and machine snapshots
 
 Still planned inside v0.2b:
 
-- deterministic rollup derivation proposal/output
 - freshness policy configuration by project/attention type
-- machine-readable Core snapshot output
 - clearer Project State schema validation
+- first live validation of proposal/snapshot output against the private Project OS
 
-**Exit gate:** the platform has explicit agent boundaries and Core can detect state drift without a human comparing files.
+**Exit gate:** the platform has explicit agent boundaries, Core can detect state drift without a human comparing files, and structured outputs are reliable enough to feed a future runtime/orchestrator.
 
 ## v0.3 — Persistent Homelab runtime
 
