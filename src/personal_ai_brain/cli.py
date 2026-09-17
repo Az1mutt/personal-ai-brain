@@ -14,6 +14,7 @@ from personal_ai_brain.github_reader import GitHubReader
 from personal_ai_brain.machine_snapshot import build_machine_snapshot
 from personal_ai_brain.rollup_proposal import RollupProposalEngine
 from personal_ai_brain.state_integrity import StateIntegrityChecker
+from personal_ai_brain.state_quality import FreshnessPolicy, ProjectStateQualityChecker
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -25,6 +26,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="Read Project OS state from GitHub and render a Core report.",
     )
     _add_core_source_arguments(report)
+    _add_core_quality_arguments(report)
     report.add_argument(
         "--output",
         type=Path,
@@ -41,6 +43,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="Render machine-readable Core state for automation/orchestration.",
     )
     _add_core_source_arguments(snapshot)
+    _add_core_quality_arguments(snapshot)
     _add_structured_output_arguments(snapshot, default_format="json")
 
     proposals = subparsers.add_parser(
@@ -84,6 +87,17 @@ def _add_core_source_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--ref", default="main")
 
 
+def _add_core_quality_arguments(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "--freshness-policy",
+        type=Path,
+        help=(
+            "Optional freshness-policy YAML. When omitted, built-in defaults are "
+            "used (matching config/freshness-policy.yaml)."
+        ),
+    )
+
+
 def _add_structured_output_arguments(
     parser: argparse.ArgumentParser,
     *,
@@ -109,6 +123,15 @@ def _load_registry(directory: Path) -> AgentRegistry:
         raise
 
 
+def _load_freshness_policy(path: Path | None) -> FreshnessPolicy:
+    if path is None:
+        return FreshnessPolicy.default()
+    try:
+        return FreshnessPolicy.from_file(path)
+    except (OSError, ValueError) as exc:
+        raise ValueError(f"Could not load freshness policy {path}: {exc}") from exc
+
+
 def _print_agent(contract) -> None:
     print(f"id: {contract.id}")
     print(f"name: {contract.name}")
@@ -132,6 +155,7 @@ def _collect_core(
     *,
     central_repo: str,
     ref: str,
+    freshness_policy_path: Path | None = None,
 ):
     reader = GitHubReader()
     agent = CoreAgent(
@@ -154,6 +178,23 @@ def _collect_core(
             finding.message,
         )
         for finding in integrity.findings
+    )
+
+    policy = _load_freshness_policy(freshness_policy_path)
+    quality = ProjectStateQualityChecker(
+        reader,
+        policy=policy,
+        central_repository=central_repo,
+        ref=ref,
+    ).check()
+    snapshot.findings.extend(
+        Finding(
+            finding.severity,
+            finding.code,
+            finding.subject,
+            finding.message,
+        )
+        for finding in quality.findings
     )
 
     proposals = RollupProposalEngine(
@@ -183,10 +224,16 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
 
     if args.command == "core-report":
-        agent, snapshot, _ = _collect_core(
-            central_repo=args.central_repo,
-            ref=args.ref,
-        )
+        try:
+            agent, snapshot, _ = _collect_core(
+                central_repo=args.central_repo,
+                ref=args.ref,
+                freshness_policy_path=args.freshness_policy,
+            )
+        except ValueError as exc:
+            print(f"Core quality configuration error: {exc}", file=sys.stderr)
+            return 2
+
         report = agent.render_markdown(snapshot)
         _write_or_print(report, args.output)
 
@@ -197,10 +244,16 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if args.command == "core-snapshot":
-        _, snapshot, proposals = _collect_core(
-            central_repo=args.central_repo,
-            ref=args.ref,
-        )
+        try:
+            _, snapshot, proposals = _collect_core(
+                central_repo=args.central_repo,
+                ref=args.ref,
+                freshness_policy_path=args.freshness_policy,
+            )
+        except ValueError as exc:
+            print(f"Core quality configuration error: {exc}", file=sys.stderr)
+            return 2
+
         payload = build_machine_snapshot(snapshot, proposals)
         _write_or_print(_render_structured(payload, args.format), args.output)
         return 2 if snapshot.errors else 0

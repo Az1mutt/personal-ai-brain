@@ -1,0 +1,17 @@
+schema_version: "0.1"
+
+default_days: 14
+
+attention_days:
+  urgent_time_bound: 2
+  active: 7
+  active_secondary: 14
+  needs_refresh: 0
+  background: 30
+
+disabled_attention:
+  - deferred
+  - deferred_until_feasibility
+  - parked
+  - none
+  - future
