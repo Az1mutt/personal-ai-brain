@@ -2,71 +2,75 @@ schema_version: "0.2"
 
 project:
   name: "Personal AI Brain / Agent Platform"
-  workstream: "Core Agent v0.1"
+  workstream: "Agent Platform Foundation"
   owner: "Project OS & Agent Architecture chat"
 
 status: "active"
-phase: "core-agent-v0.1-real-data-validation"
+phase: "agent-contract-registry-foundation"
 
 current_gate: >
-  Run the merged read-only Core Agent against the real private Project OS
-  repository and verify that discovery, YAML parsing, attention handling and
-  report generation work end to end on live state.
+  Validate the newly merged Agent Contract and Registry foundation against the
+  platform's next real specialist-agent use case, then continue with state
+  integrity/rollup validation without expanding runtime autonomy prematurely.
+  The live Core Agent read against private Project OS remains an acceptance test,
+  not a blocker to continued platform development.
 
 current_state: >
-  Core Agent v0.1 is implemented and merged to main. The repository now contains
-  a Python package, CLI, read-only GitHub Contents API adapter, Project OS
-  discovery/validation logic, Markdown reporting, tests, CI, architecture/vision
-  docs and this Project State. GitHub Actions test run #1 completed successfully
-  on 2026-09-09. The agent intentionally has no GitHub write methods, no LLM
-  planner, no scheduler and no database dependency yet. The earlier PostgreSQL/
-  pgvector/Ollama concept remains reserved as a future Memory & Knowledge
-  subsystem of the broader multi-agent platform.
+  Personal AI Brain now has two working platform layers in main. Core Agent v0.1
+  provides deterministic read-only Project OS discovery, validation and reporting.
+  The newly merged Agent Contract + Registry foundation defines what an agent is
+  in this system through explicit responsibility, inputs, outputs, tools,
+  resource permissions, approval policy and event boundaries. Core Agent is the
+  first registered agent. The repository includes registry loading/validation,
+  CLI commands for agent validation/list/show, documentation and deterministic
+  tests. GitHub Actions run #8 passed successfully before PR #3 was squash-merged.
+  No write-capable GitHub actions, LLM framework, scheduler, database or persistent
+  runtime were introduced by this milestone.
 
 exact_next_action: >
-  Run `personal-ai-brain core-report` against
-  Az1mutt/personal-project-brain using a read-capable GITHUB_TOKEN, inspect the
-  generated live report, and fix any real-schema/discovery mismatches before
-  persistent Homelab deployment.
+  Implement the next deterministic platform layer: rollup/state-integrity checks
+  that compare project rollups with specialist workstream state and detect drift,
+  while keeping the live private-repo Core Agent run as a pending acceptance test
+  to execute later from Igor's own PC or Homelab.
 
 blockers:
   - >
-      A runtime with a read-capable GitHub token is required for the first
-      end-to-end run against the private personal-project-brain repository.
+      Live Core Agent validation against the private personal-project-brain
+      repository still requires a runtime with a read-capable GitHub token, but
+      this does not block continued platform development.
   - >
-      Persistent Homelab service deployment should wait for formal Homelab
-      migration closure, although manual/local execution can happen before that.
+      Persistent Homelab deployment still waits for the preferred runtime context
+      and eventual migration closure; server-specific work is intentionally deferred.
 
 dependencies:
   - project: "Personal Project Brain / Project OS"
-    dependency: "Provides core/project-map.yaml and durable Project/Workstream States."
+    dependency: "Provides project-map.yaml and durable Project/Workstream States consumed by Core Agent."
   - project: "Homelab & Media Stack"
-    dependency: "Preferred persistent runtime host after migration closure."
+    dependency: "Preferred persistent runtime host for later deployment, scheduling and local integrations."
 
 important_open_loops:
-  - "Run Core Agent v0.1 against live private Project OS state."
-  - "Fix any live schema/discovery mismatches found by that run."
-  - "Add deterministic project-rollup derivation/validation in v0.2."
-  - "Package/deploy to Homelab after migration closure."
-  - "Add scheduling/triggering only after manual CLI execution is stable."
-  - "Add Repo Steward and Career Evidence agents after the Core Agent boundary is proven."
+  - "Run Core Agent v0.1 against live private Project OS state from Igor's own PC or Homelab."
+  - "Add deterministic project-rollup derivation/validation and conflict detection."
+  - "Add machine-readable Core snapshot output and clearer schema validation."
+  - "Define the first real second agent, likely Repo Steward, only after platform boundaries stay clean."
+  - "Package/deploy to Homelab after runtime/deployment work becomes the active gate."
+  - "Add scheduling/events after manual agent execution is stable."
   - "Add LLM/planner/orchestrator layers only where semantic judgment adds value."
   - "Retain PostgreSQL/pgvector/Ollama as a future Memory & Knowledge subsystem."
 
 portfolio:
   milestone: true
   signal: >
-    First working implementation milestone for a local-first personal multi-agent
-    platform: deterministic Project OS discovery, read-only GitHub integration,
-    state integrity checks, attention-aware reporting, CLI packaging and CI test
-    coverage with explicit autonomy boundaries.
+    The project has moved from a single read-only agent into a reusable multi-agent
+    platform foundation with explicit contracts, registry validation, tool/resource
+    permission boundaries, approval policy, event interfaces, CLI support and CI.
 
 verification:
-  last_verified: "2026-09-09"
+  last_verified: "2026-09-17"
   sources:
-    - "personal-ai-brain PR #1: Bootstrap Core Agent v0.1"
-    - "GitHub Actions workflow tests run #1: success"
-    - "main merge commit 6fc0b993448773b3212fc3ae7d58676450bda72f"
+    - "personal-ai-brain PR #3: Add Agent Contract and Registry foundation"
+    - "GitHub Actions workflow tests run #8: success"
+    - "main merge commit e9656aaf50580d7b36200cb4919187d970e01f65"
 
 sync:
   status: "synced"
