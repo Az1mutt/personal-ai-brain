@@ -6,6 +6,8 @@ The roadmap deliberately grows autonomy in layers. The long-term destination is 
 
 Goal: remove manual Core consolidation.
 
+Implemented and CI-tested:
+
 - Python package and CLI
 - read-only GitHub adapter
 - Project OS project/workstream discovery
@@ -13,11 +15,8 @@ Goal: remove manual Core consolidation.
 - stale/missing/sync findings
 - attention-aware Core report
 - unit tests and CI
-- first run against real private Project OS state
 
-**Exit gate:** real Project OS can be read and summarized reliably without manual deltas.
-
-The implementation is merged and CI-tested. The first live run against the private Project OS remains a runtime acceptance check rather than a blocker for continued platform development.
+The first live run against the private Project OS remains a runtime acceptance check rather than a blocker for continued platform development.
 
 ## v0.2 — Platform contracts and state integrity
 
@@ -51,25 +50,35 @@ Implemented:
 - refuse deterministic narrative synthesis when multiple blocking workstreams are active
 - machine-readable Core snapshot output in JSON/YAML
 - CLI output for rollup proposals and machine snapshots
+- Project State v0.2 schema/type/storage validation
+- attention-aware freshness policy
+- freshness disablement for intentionally deferred/parked/future work
+- per-project/workstream `freshness_days` override support
+- configurable freshness-policy YAML
 
-Still planned inside v0.2b:
+**Implementation exit gate:** reached once CI passes for the final schema/freshness slice.
 
-- freshness policy configuration by project/attention type
-- clearer Project State schema validation
-- first live validation of proposal/snapshot output against the private Project OS
+The remaining live validation against the private Project OS is intentionally carried into v0.3 as the first runtime acceptance task. This avoids blocking the platform foundation on access to Igor's personal machine while still requiring a real-data run before persistent automation is considered proven.
 
-**Exit gate:** the platform has explicit agent boundaries, Core can detect state drift without a human comparing files, and structured outputs are reliable enough to feed a future runtime/orchestrator.
+## v0.3 — Persistent Homelab runtime — NEXT
 
-## v0.3 — Persistent Homelab runtime
+Goal: move the proven read-only platform from interactive development into a reliable local runtime.
 
-- Docker packaging
+Planned:
+
+- clone/install on the Ubuntu Homelab host
 - read-only GitHub token/secrets handling
+- first live `core-report`, `core-snapshot` and rollup-proposal run against the private Project OS
+- fix any real-data schema/policy mismatches discovered by that run
+- Docker packaging
+- persistent read-only service/container shape
 - scheduled/manual trigger
-- run logs
+- run logs and retention
 - health checks
 - notification of meaningful findings only
+- evaluate n8n as orchestration/event glue after the basic runtime is reliable
 
-**Exit gate:** Core Agent runs reliably without an interactive ChatGPT session.
+**Exit gate:** Core Agent runs reliably without an interactive ChatGPT session and produces useful, low-noise state output from real Project OS data.
 
 ## v0.4 — Repo Steward
 
