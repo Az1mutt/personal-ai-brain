@@ -25,6 +25,8 @@ Goal: define a stable multi-agent platform boundary before adding runtime orches
 
 ### v0.2a — Agent Contract + Registry
 
+Implemented and merged:
+
 - declarative agent contract schema
 - explicit responsibility, inputs and outputs
 - tool permissions and resource boundaries
@@ -36,9 +38,20 @@ Goal: define a stable multi-agent platform boundary before adding runtime orches
 
 ### v0.2b — Project rollups and state integrity
 
-- derive/validate multi-workstream project rollups
-- detect contradictions between rollup and child workstreams
-- freshness policy by project/attention type
+Current implementation scope:
+
+- validate multi-workstream project rollup shape
+- detect root/workstream path drift against the Project Map
+- detect active workstreams missing from `rollup_policy.generated_from`
+- detect root rollups older than active child workstreams
+- detect `synced` rollups sitting above unsynchronized active child states
+- detect hard status contradictions such as a completed project with an active workstream
+- feed integrity findings into the normal `core-report`
+
+Still planned inside v0.2b:
+
+- deterministic rollup derivation proposal/output
+- freshness policy configuration by project/attention type
 - machine-readable Core snapshot output
 - clearer Project State schema validation
 
