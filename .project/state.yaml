@@ -6,72 +6,75 @@ project:
   owner: "Project OS & Agent Architecture chat"
 
 status: "active"
-phase: "rollup-proposals-machine-snapshot-v0.2b"
+phase: "homelab-runtime-v0.3-ready"
 
 current_gate: >
-  Complete the remaining deterministic v0.2b state-model hardening: clearer
-  Project State schema validation and configurable freshness policy, then run the
-  read-only Core/report/proposal/snapshot stack against the real private Project
-  OS when Igor is on his own PC or Homelab. Runtime deployment, LLM planning and
-  write-capable autonomy remain intentionally out of scope for this gate.
+  Run the complete read-only v0.2 platform against the real private Project OS
+  from Igor's own PC or Homelab, resolve any real-data schema/policy mismatches,
+  and then establish a persistent read-only Homelab runtime with safe secret
+  handling, logs, health checks and controlled triggering.
 
 current_state: >
-  Personal AI Brain now has a read-only multi-agent platform foundation in main.
-  Core Agent discovers and reports Project OS state; Agent Contract + Registry
-  defines explicit agent responsibilities, tool/resource permissions, approvals
-  and event boundaries; State Integrity detects deterministic multi-workstream
-  rollup drift and hard conflicts. PR #5 added a deterministic RollupProposalEngine
-  plus machine-readable Core snapshots. The proposal layer can update structural
-  and freshness fields and can propagate phase/gate/next-action only when exactly
-  one blocking workstream makes that derivation unambiguous. With multiple active
-  blocking workstreams it explicitly requires semantic/manual synthesis instead
-  of inventing a shared narrative. New CLI commands expose rollup proposals and
-  JSON/YAML Core snapshots for future scheduler, n8n or orchestrator consumers.
-  GitHub Actions run #16 passed before PR #5 was squash-merged. The platform still
-  has no GitHub write capability, LLM planner, scheduler, database or persistent
-  runtime dependency.
+  Personal AI Brain v0.2 is implementation-complete in main. Core Agent provides
+  deterministic read-only Project OS discovery and reporting. Agent Contract +
+  Registry defines agent responsibilities, inputs/outputs, tool/resource
+  permissions, approvals and future event boundaries. State Integrity detects
+  multi-workstream rollup drift and hard conflicts. RollupProposalEngine produces
+  read-only deterministic repair proposals without inventing shared narratives
+  when multiple blocking workstreams require semantic synthesis. Core snapshots
+  expose machine-readable JSON/YAML for future runtime/orchestrator consumers.
+  PR #6 completed the final pre-runtime quality layer: Project State v0.2 schema,
+  type, scope and sync.storage validation plus attention-aware freshness policy,
+  configurable YAML thresholds, deferred/parked/future noise suppression and
+  per-project/workstream freshness overrides. GitHub Actions run #23 passed before
+  PR #6 was squash-merged. The Core Agent still has no GitHub write capability,
+  LLM planner, scheduler, database or autonomous execution path.
 
 exact_next_action: >
-  Add deterministic Project State schema validation and configurable freshness
-  policy by attention/project class. After that, validate core-report,
-  rollup-proposals and core-snapshot against the real private Project OS from
-  Igor's own PC or Homelab before moving into persistent runtime work.
+  On Igor's own PC or Homelab, clone/pull personal-ai-brain, provide a read-only
+  GitHub token for the private personal-project-brain repository, install the
+  package, and run core-report, rollup-proposals and core-snapshot against live
+  Project OS data. Capture any real-data findings and fix genuine schema/policy
+  mismatches before Docker/persistent-service packaging.
 
 blockers:
   - >
-      Live validation against the private personal-project-brain repository still
-      requires a runtime with a read-capable GitHub token, but this remains an
-      acceptance test rather than a blocker for environment-independent platform
-      development.
+      The first live private-repository acceptance run requires access to Igor's
+      own PC or Homelab plus a read-capable GitHub token; the current work laptop
+      is intentionally not used for that runtime test.
+
   - >
-      Persistent Homelab deployment waits for the server/runtime phase; current
-      schema/policy work remains environment-independent.
+      Persistent deployment details such as Docker layout, secret injection,
+      scheduling and notifications remain deliberately unimplemented until the
+      first real-data run confirms the read-only platform behaves as expected.
 
 dependencies:
   - project: "Personal Project Brain / Project OS"
     dependency: "Provides project-map.yaml and durable Project/Workstream States consumed by Core Agent."
   - project: "Homelab & Media Stack"
-    dependency: "Preferred persistent runtime host for later deployment, scheduling and local integrations."
+    dependency: "Preferred persistent runtime host for Docker, scheduling and local integrations."
 
 important_open_loops:
-  - "Run Core Agent against live private Project OS state from Igor's own PC or Homelab."
-  - "Validate rollup-proposals against real Homelab and Recipe multi-workstream states."
+  - "Run core-report against live private Project OS state."
+  - "Run rollup-proposals against real Homelab and Recipe multi-workstream states."
   - "Validate core-snapshot JSON/YAML as the machine contract for future runtime/orchestrator consumers."
-  - "Add clearer Project State schema validation."
-  - "Add configurable freshness policy by attention/project class."
-  - "Define the first real second agent, likely Repo Steward, after deterministic v0.2b hardening."
-  - "Package/deploy to Homelab when runtime/deployment becomes the active gate."
-  - "Add scheduling/events after manual agent execution is stable."
+  - "Resolve any real-data schema/freshness mismatches discovered by the first live run."
+  - "Design and implement Docker packaging for the Homelab runtime."
+  - "Implement read-only GitHub secret injection without committing credentials."
+  - "Add manual/scheduled trigger, run logs, health checks and low-noise notifications."
+  - "Evaluate n8n as event/orchestration glue after the base runtime is reliable."
+  - "Define the first real second agent, likely Repo Steward, after Core Agent runtime behavior is proven."
   - "Add LLM/planner/orchestrator layers only where semantic judgment adds value."
   - "Retain PostgreSQL/pgvector/Ollama as a future Memory & Knowledge subsystem."
 
 portfolio:
   milestone: true
   signal: >
-    The platform now produces deterministic integrity findings, read-only rollup
-    repair proposals and machine-readable cross-project snapshots on top of an
-    explicit agent contract/permission model, creating a clean interface for
-    future automation and orchestration without premature autonomous writes.
+    Personal AI Brain now has a CI-tested read-only multi-agent platform core with
+    explicit agent contracts/permissions, deterministic Project OS integrity and
+    schema validation, attention-aware freshness policy, rollup repair proposals
+    and machine-readable automation outputs. The project is ready to move from
+    environment-independent platform design into a persistent Homelab runtime.
 
 verification:
   last_verified: "2026-09-17"
@@ -79,8 +82,9 @@ verification:
     - "personal-ai-brain PR #3: Add Agent Contract and Registry foundation"
     - "personal-ai-brain PR #4: Add deterministic Project State integrity checks"
     - "personal-ai-brain PR #5: Add rollup proposals and machine-readable Core snapshots"
-    - "GitHub Actions workflow tests run #16: success"
-    - "main merge commit e93c2a0c04063ea852e60f6594bf10e99c1b61b2"
+    - "personal-ai-brain PR #6: Complete v0.2 state schema and freshness quality layer"
+    - "GitHub Actions workflow tests run #23: success"
+    - "main merge commit edeba8bf5c37689315b858aeb3413b722d5c2090"
 
 sync:
   status: "synced"
