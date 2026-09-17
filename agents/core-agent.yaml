@@ -1,0 +1,51 @@
+schema_version: "0.1"
+
+id: "core-agent"
+name: "Core Agent"
+version: "0.1"
+enabled: true
+entrypoint: "personal_ai_brain.core_agent:CoreAgent"
+
+responsibility: >
+  Read durable Project OS state, validate state integrity, and produce a
+  cross-project Core snapshot without taking ownership of specialist project
+  truth or performing writes.
+
+autonomy: "read_only"
+
+inputs:
+  - "project_map"
+  - "project_state"
+  - "workstream_state"
+
+outputs:
+  - "core_snapshot"
+  - "integrity_findings"
+  - "markdown_report"
+
+tools:
+  - id: "github.contents"
+    access: "read"
+    approval_required: false
+
+resources:
+  reads:
+    - "github:Az1mutt/personal-project-brain/core/project-map.yaml"
+    - "github:Az1mutt/personal-project-brain/projects/**/state.yaml"
+    - "github:*:/.project/state.yaml"
+    - "github:*:/.project/workstreams/*.yaml"
+  writes: []
+
+approval:
+  required_for:
+    - "any_write"
+    - "external_side_effect"
+    - "destructive_action"
+
+events:
+  consumes:
+    - "manual.core_report.requested"
+    - "project_state.changed"
+  emits:
+    - "core_snapshot.generated"
+    - "state_integrity.finding"
