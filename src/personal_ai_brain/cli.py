@@ -5,8 +5,9 @@ import sys
 from pathlib import Path
 
 from personal_ai_brain.agent_registry import AgentRegistry, AgentRegistryError
-from personal_ai_brain.core_agent import CoreAgent
+from personal_ai_brain.core_agent import CoreAgent, Finding
 from personal_ai_brain.github_reader import GitHubReader
+from personal_ai_brain.state_integrity import StateIntegrityChecker
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -90,12 +91,29 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
 
     if args.command == "core-report":
+        reader = GitHubReader()
         agent = CoreAgent(
-            GitHubReader(),
+            reader,
             central_repository=args.central_repo,
             ref=args.ref,
         )
         snapshot = agent.collect()
+
+        integrity = StateIntegrityChecker(
+            reader,
+            central_repository=args.central_repo,
+            ref=args.ref,
+        ).check()
+        snapshot.findings.extend(
+            Finding(
+                finding.severity,
+                finding.code,
+                finding.subject,
+                finding.message,
+            )
+            for finding in integrity.findings
+        )
+
         report = agent.render_markdown(snapshot)
 
         if args.output:
