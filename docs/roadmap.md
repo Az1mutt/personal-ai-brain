@@ -17,15 +17,32 @@ Goal: remove manual Core consolidation.
 
 **Exit gate:** real Project OS can be read and summarized reliably without manual deltas.
 
-## v0.2 — Rollups and state integrity
+The implementation is merged and CI-tested. The first live run against the private Project OS remains a runtime acceptance check rather than a blocker for continued platform development.
+
+## v0.2 — Platform contracts and state integrity
+
+Goal: define a stable multi-agent platform boundary before adding runtime orchestration.
+
+### v0.2a — Agent Contract + Registry
+
+- declarative agent contract schema
+- explicit responsibility, inputs and outputs
+- tool permissions and resource boundaries
+- approval policy declaration
+- future event consume/emit surface
+- local YAML agent registry
+- Core Agent registered as the first `read_only` agent
+- deterministic contract tests and CLI inspection
+
+### v0.2b — Project rollups and state integrity
 
 - derive/validate multi-workstream project rollups
 - detect contradictions between rollup and child workstreams
 - freshness policy by project/attention type
 - machine-readable Core snapshot output
-- clearer schema validation
+- clearer Project State schema validation
 
-**Exit gate:** Core can detect state drift without a human comparing files.
+**Exit gate:** the platform has explicit agent boundaries and Core can detect state drift without a human comparing files.
 
 ## v0.3 — Persistent Homelab runtime
 
@@ -66,17 +83,17 @@ Candidates:
 - Recipe Ingestion / Curation Agent
 - Trading Intelligence Agent
 
-Each gets its own tools and permission envelope.
+Each gets its own contract, tools and permission envelope.
 
 ## v0.7 — Events and orchestration
 
-- event schema
+- event schema transport
 - task/event queue if justified by volume
-- agent registry
 - routing rules
 - retries/idempotency
 - cross-agent handoffs
 - policy engine
+- orchestrator/router that consumes the Agent Registry
 
 Example:
 

@@ -60,6 +60,20 @@ Explicitly **not** implemented in v0.1:
 
 Those are future layers, not prerequisites for proving the read path.
 
+## Agent Contract + Registry
+
+The platform now also has a declarative boundary for agents. Agent manifests live under `agents/` and define responsibility, inputs/outputs, tool permissions, readable/writable resources, approval boundaries and future event contracts.
+
+Core Agent is the first registered agent and remains strictly `read_only`.
+
+```bash
+personal-ai-brain agents validate
+personal-ai-brain agents list
+personal-ai-brain agents show core-agent
+```
+
+See [Agent Contract v0.1](docs/agent-contract.md).
+
 ## Quick start
 
 Requirements:
@@ -94,10 +108,12 @@ Do not commit tokens or other secrets.
 
 ```text
 .project/                         Project OS state for this project
+agents/                           declarative agent contracts
 src/personal_ai_brain/            Python package
 tests/                            deterministic unit tests
 docs/vision.md                    long-term destination
 docs/architecture.md              architecture and boundaries
+docs/agent-contract.md            agent permission/contract model
 docs/roadmap.md                   staged implementation plan
 database/                         reserved for future memory/state services
 docker/                           reserved for Homelab deployment
@@ -112,7 +128,8 @@ docker/                           reserved for Homelab deployment
 5. **Every agent owns a narrow responsibility.**
 6. **Durable state lives outside chat memory.**
 7. **Agents should coordinate through explicit state/events, not hidden assumptions.**
-8. **The sci-fi version is allowed — after every autonomy boundary has earned its way in.**
+8. **Capability and permission are separate: a tool existing does not imply an agent may use it.**
+9. **The sci-fi version is allowed — after every autonomy boundary has earned its way in.**
 
 ## Memory / RAG
 
