@@ -6,41 +6,42 @@ project:
   owner: "Project OS & Agent Architecture chat"
 
 status: "active"
-phase: "agent-contract-registry-foundation"
+phase: "state-integrity-v0.2b"
 
 current_gate: >
-  Validate the newly merged Agent Contract and Registry foundation against the
-  platform's next real specialist-agent use case, then continue with state
-  integrity/rollup validation without expanding runtime autonomy prematurely.
-  The live Core Agent read against private Project OS remains an acceptance test,
-  not a blocker to continued platform development.
+  Extend the deterministic Core platform from drift detection into reproducible
+  rollup proposal/output and machine-readable snapshots, while keeping runtime
+  deployment, LLM planning and write-capable autonomy out of scope until the
+  underlying state model is proven.
 
 current_state: >
-  Personal AI Brain now has two working platform layers in main. Core Agent v0.1
-  provides deterministic read-only Project OS discovery, validation and reporting.
-  The newly merged Agent Contract + Registry foundation defines what an agent is
-  in this system through explicit responsibility, inputs, outputs, tools,
-  resource permissions, approval policy and event boundaries. Core Agent is the
-  first registered agent. The repository includes registry loading/validation,
-  CLI commands for agent validation/list/show, documentation and deterministic
-  tests. GitHub Actions run #8 passed successfully before PR #3 was squash-merged.
-  No write-capable GitHub actions, LLM framework, scheduler, database or persistent
-  runtime were introduced by this milestone.
+  Personal AI Brain now has three working platform layers in main. Core Agent v0.1
+  provides deterministic read-only Project OS discovery and reporting. Agent
+  Contract + Registry defines explicit agent responsibilities, inputs/outputs,
+  tool/resource permissions, approvals and event boundaries. State Integrity
+  v0.2b now validates multi-workstream project rollups against the Project Map and
+  active child states. It detects rollup/workstream declaration drift, missing
+  active generated_from sources, rollups older than active workstreams, synced
+  roots above unsynchronized children, and hard terminal-root versus active-child
+  status conflicts. These findings are integrated into the normal core-report.
+  GitHub Actions run #13 passed before PR #4 was squash-merged. The platform is
+  still read-only and has no LLM framework, scheduler, database or persistent
+  runtime dependency.
 
 exact_next_action: >
-  Implement the next deterministic platform layer: rollup/state-integrity checks
-  that compare project rollups with specialist workstream state and detect drift,
-  while keeping the live private-repo Core Agent run as a pending acceptance test
-  to execute later from Igor's own PC or Homelab.
+  Implement deterministic rollup proposal/output plus machine-readable Core
+  snapshot export. The goal is for Core to show what a corrected rollup should
+  contain without writing it, and to expose findings/state in a structured format
+  suitable for the later Homelab runtime, scheduler and orchestrator.
 
 blockers:
   - >
       Live Core Agent validation against the private personal-project-brain
       repository still requires a runtime with a read-capable GitHub token, but
-      this does not block continued platform development.
+      this remains an acceptance test rather than a development blocker.
   - >
-      Persistent Homelab deployment still waits for the preferred runtime context
-      and eventual migration closure; server-specific work is intentionally deferred.
+      Persistent Homelab deployment waits for the server/runtime phase; current
+      contract and integrity work is intentionally environment-independent.
 
 dependencies:
   - project: "Personal Project Brain / Project OS"
@@ -49,11 +50,12 @@ dependencies:
     dependency: "Preferred persistent runtime host for later deployment, scheduling and local integrations."
 
 important_open_loops:
-  - "Run Core Agent v0.1 against live private Project OS state from Igor's own PC or Homelab."
-  - "Add deterministic project-rollup derivation/validation and conflict detection."
-  - "Add machine-readable Core snapshot output and clearer schema validation."
-  - "Define the first real second agent, likely Repo Steward, only after platform boundaries stay clean."
-  - "Package/deploy to Homelab after runtime/deployment work becomes the active gate."
+  - "Run Core Agent against live private Project OS state from Igor's own PC or Homelab."
+  - "Add deterministic rollup proposal/output without enabling writes."
+  - "Add machine-readable Core snapshot output."
+  - "Add clearer Project State schema validation after the real-state shape is exercised further."
+  - "Define the first real second agent, likely Repo Steward, after the deterministic platform layer is stable."
+  - "Package/deploy to Homelab when runtime/deployment becomes the active gate."
   - "Add scheduling/events after manual agent execution is stable."
   - "Add LLM/planner/orchestrator layers only where semantic judgment adds value."
   - "Retain PostgreSQL/pgvector/Ollama as a future Memory & Knowledge subsystem."
@@ -61,16 +63,18 @@ important_open_loops:
 portfolio:
   milestone: true
   signal: >
-    The project has moved from a single read-only agent into a reusable multi-agent
-    platform foundation with explicit contracts, registry validation, tool/resource
-    permission boundaries, approval policy, event interfaces, CLI support and CI.
+    The platform now combines explicit agent contracts with deterministic
+    cross-project state integrity checks, giving a reusable foundation for
+    multi-agent coordination without relying on hidden chat context or premature
+    autonomous writes.
 
 verification:
   last_verified: "2026-09-17"
   sources:
     - "personal-ai-brain PR #3: Add Agent Contract and Registry foundation"
-    - "GitHub Actions workflow tests run #8: success"
-    - "main merge commit e9656aaf50580d7b36200cb4919187d970e01f65"
+    - "personal-ai-brain PR #4: Add deterministic Project State integrity checks"
+    - "GitHub Actions workflow tests run #13: success"
+    - "main merge commit ed19bdf937a4ced7dfad1998b9b92847afcc5e7a"
 
 sync:
   status: "synced"
