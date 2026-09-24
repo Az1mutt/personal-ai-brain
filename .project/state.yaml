@@ -6,13 +6,13 @@ project:
   owner: "Project OS & Agent Architecture chat"
 
 status: "active"
-phase: "homelab-live-acceptance-bootstrap"
+phase: "homelab-live-read-verified"
 
 current_gate: >
-  Run the complete read-only v0.2 platform against the real private Project OS
-  from Igor's own PC or Homelab, resolve any real-data schema/policy mismatches,
-  and then establish a persistent read-only Homelab runtime with safe secret
-  handling, logs, health checks and controlled triggering.
+  The first live private Project OS read path is verified on Homelab.
+  Review the recorded source-state schema/freshness findings with their owners,
+  then establish persistent read-only execution with explicit error handling,
+  safe credential injection, logs and controlled triggering.
 
 current_state: >
   Personal AI Brain v0.2 is implementation-complete in main. Core Agent provides
@@ -29,30 +29,34 @@ current_state: >
   per-project/workstream freshness overrides. GitHub Actions run #23 passed before
   PR #6 was squash-merged. The Core Agent still has no GitHub write capability,
   LLM planner, scheduler, database or autonomous execution path.
-  On 2026-09-24, direct Homelab SSH access and outbound GitHub access were
-  verified and main at 62afa941b5eec128f9f50f3c6928ef0f42fd9ac1 was cloned
-  into ~/projects/personal-ai-brain. Python 3.14.4, Git 2.53.0, Docker
-  29.7.2 and Compose 5.5.0 are available. Virtualenv creation failed because
-  ensurepip/python3.14-venv is missing. Installation and tests have not run.
+  On 2026-09-24 the package was installed in an isolated Homelab virtualenv
+  using Python 3.14.4, PyYAML 6.0.3 and pytest 8.4.2. All 29 tests passed
+  and agents validate passed for one read-only agent. The runtime credential
+  is provisioned outside Git with file mode 600; its value was not displayed.
+  The first live run read 12 state records across 8 projects and generated
+  a Markdown report, two rollup proposals and a consistent JSON snapshot.
+  core-report and core-snapshot returned 2 because three source states omit
+  required schema fields; rollup-proposals returned 0. Six freshness/rollup
+  warnings were also observed. These findings match the canonical v0.2 schema;
+  no implementation defect was established and no validator was weakened.
+  Private outputs remain outside the public checkout. This proves one manual
+  live read run, not unattended runtime reliability or clean source-state health.
 
 exact_next_action: >
-  Igor runs the prepared interactive prerequisite helper on Homelab to install
-  python3.14-venv using sudo and enter a fine-grained read-only GitHub token.
-  Then Codex recreates the venv, installs the package, runs pytest and agents
-  validate, and performs the live core-report, rollup-proposals and JSON snapshot.
-  Record evidence before any Docker or persistent-service packaging.
+  Use docs/handoffs/CODEX_TO_CHATGPT.md to route the three missing-field
+  findings to the owning Project OS/project states without inventing facts
+  or changing verification dates just to clear warnings. Once the findings
+  have an explicit disposition, implement the bounded v0.3 persistent
+  read-only runtime through the repository's branch/PR workflow.
 
 blockers:
   - >
-      python3.14-venv is missing and sudo requires interactive authentication.
-      A read-only token for private personal-project-brain has not yet been
-      provisioned for the Homelab runtime. The separate Codex connector does
-      not provide credentials to this Python process.
-
+      Source-state health is not clean: three states omit required fields,
+      while six warnings identify old rollups or freshness-policy age.
+      Connectivity, package installation and authentication are verified.
   - >
-      Persistent deployment details such as Docker layout, secret injection,
-      scheduling and notifications remain deliberately unimplemented until the
-      first real-data run confirms the read-only platform behaves as expected.
+      Persistent execution, scheduling, service health and notification
+      behavior remain unimplemented and unverified.
 
 dependencies:
   - project: "Personal Project Brain / Project OS"
@@ -61,10 +65,10 @@ dependencies:
     dependency: "Preferred persistent runtime host for Docker, scheduling and local integrations."
 
 important_open_loops:
-  - "Run core-report against live private Project OS state."
-  - "Run rollup-proposals against real Homelab and Recipe multi-workstream states."
-  - "Validate core-snapshot JSON/YAML as the machine contract for future runtime/orchestrator consumers."
-  - "Resolve any real-data schema/freshness mismatches discovered by the first live run."
+  - "Disposition source-state findings from the completed live acceptance run."
+  - "Review the two generated rollup proposals; Homelab explicitly requires manual synthesis."
+  - "JSON snapshot consistency is verified; YAML output and persistent consumers remain future checks."
+  - "Have state owners resolve missing required fields without weakening schema checks or falsifying freshness."
   - "Design and implement Docker packaging for the Homelab runtime."
   - "Implement read-only GitHub secret injection without committing credentials."
   - "Add manual/scheduled trigger, run logs, health checks and low-noise notifications."
@@ -85,7 +89,9 @@ portfolio:
 verification:
   last_verified: "2026-09-24"
   sources:
-    - "2026-09-24 SSH bootstrap: clone verified; venv failed with missing ensurepip; sudo requires interactive authentication."
+    - "2026-09-24 Homelab acceptance: 29 tests passed; 1 agent validated; 12 states / 8 projects; 3 schema errors / 6 warnings / 2 rollup proposals."
+    - "Private reports: ~/.local/state/personal-ai-brain/acceptance-20260924T180722Z; report and snapshot exit 2 on source-state errors, proposals exit 0."
+    - "Bootstrap ensurepip prerequisite resolved by user; venv installation succeeded."
     - "docs/handoffs/CODEX_TO_CHATGPT.md"
     - "personal-ai-brain PR #3: Add Agent Contract and Registry foundation"
     - "personal-ai-brain PR #4: Add deterministic Project State integrity checks"
