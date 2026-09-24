@@ -55,7 +55,8 @@ Implemented:
 - distinction between active, background, deferred, parked and future work;
 - Markdown Core report generation;
 - CLI;
-- automated tests and CI.
+- automated tests and CI;
+- persistent Docker/Compose runtime with manual jobs, durable logs and separate liveness/source health.
 
 The rollup proposal layer intentionally refuses to invent a shared narrative when multiple blocking workstreams are active. In that case it proposes only unambiguous structural/freshness fields and marks semantic synthesis as required.
 
@@ -66,7 +67,7 @@ Explicitly **not** implemented yet:
 - GitHub writes from Core Agent;
 - LLM planning/synthesis;
 - autonomous project actions;
-- persistent scheduler/runtime;
+- scheduling and notifications;
 - database/vector memory;
 - multi-agent orchestration.
 
@@ -141,6 +142,23 @@ pytest -q
 
 Do not commit tokens or other secrets.
 
+## Homelab runtime
+
+The minimum v0.3 read-only runtime runs detached with Docker Compose. It uses the
+existing token as a file secret and retains private results outside the checkout.
+
+```sh
+sh scripts/runtime.sh up
+sh scripts/runtime.sh core-report
+sh scripts/runtime.sh rollup-proposals
+sh scripts/runtime.sh core-snapshot
+sh scripts/runtime.sh health
+sh scripts/runtime.sh logs
+```
+
+See [Homelab runtime operations and health contract](docs/homelab-runtime.md).
+Project State findings remain visible without marking the runtime dead.
+
 ## Repository structure
 
 ```text
@@ -155,7 +173,9 @@ docs/agent-contract.md            agent permission/contract model
 docs/state-quality.md             Project State schema/freshness rules
 docs/roadmap.md                   staged implementation plan
 database/                         reserved for future memory/state services
-docker/                           reserved for Homelab deployment
+docker/                           minimal read-only runtime image
+compose.yaml                      detached Homelab service
+scripts/runtime.sh                manual operations
 ```
 
 ## Architecture philosophy

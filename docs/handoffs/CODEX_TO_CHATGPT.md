@@ -1,59 +1,89 @@
 # Codex → ChatGPT Handoff
 
 ## Timestamp
-2026-09-24 20:10 Europe/Bratislava
+2026-09-24 20:35 Europe/Bratislava
 
 ## Scope
-Install and run the complete manual v0.2 acceptance sequence on Homelab against live Project OS data.
+Minimum v0.3 persistent READ-ONLY Homelab runtime. The earlier v0.2 live acceptance
+was already complete and was not repeated as a bootstrap/setup exercise.
 
 ## Environment
-- Host: Igor's Ubuntu Homelab; private connection details omitted.
+- Host: Igor's Linux Homelab; private connection details omitted.
 - Repo: Az1mutt/personal-ai-brain, ~/projects/personal-ai-brain.
-- Branch: main.
-- Commit / PR: acceptance checkout 7cc570d2b50e41e5f9026521ffccd9dd1a7a1b5d; state sync 592f4314368865d25959b654f2e437676d1908a6.
-- Runtime/deployment target: manual isolated .venv; no persistent service.
+- Change branch: feat/homelab-readonly-runtime, through branch/PR workflow.
+- Deployment: Docker Compose project personal-ai-brain, service core.
+- Runtime: digest-pinned Python 3.14 slim image, pinned PyYAML 6.0.3.
+- Existing .venv remains available for tests; no new credential was provisioned.
 
-## Verified starting state
-SSH and outbound GitHub access worked. User completed the interactive prerequisite helper. Token file exists outside Git with mode 600. Python 3.14.4 can now create a complete virtualenv. No token value was printed.
+## Implemented and verified
+The detached container survives SSH/session termination. Its restart policy is
+unless-stopped and the host Docker service is enabled at boot. Container recreation
+was exercised; whole-host reboot and long-duration operation were not.
 
-## Changes made
-Installed the existing package and development dependencies into .venv: PyYAML 6.0.3, pytest 8.4.2. Ran acceptance without application-code changes. Saved private reports outside the repository under ~/.local/state/personal-ai-brain/acceptance-20260924T180722Z. Updated owned Project State.
+The existing mode-600 GitHub credential is injected as a read-only Compose file
+secret, read by UID/GID 1000. Its value is not in Git, image build inputs, environment
+variables, CLI arguments or reports. Runtime root is read-only, capabilities are
+dropped, no-new-privileges is enabled, and no ports or Docker socket are exposed.
+Core still uses the existing GET-only reader; no write method or permission was added.
+The token's successful read access is verified; its user-selected permission scope
+was not independently audited through GitHub settings.
 
-## Commands / checks run
-- python3 -m venv .venv and .venv/bin/python -m pip install -e '.[dev]': succeeded.
-- pytest -q: 29 passed.
-- personal-ai-brain agents validate: 1 valid agent.
-- core-report: exit 2, report generated.
-- rollup-proposals --format json: exit 0, two proposals generated.
-- core-snapshot --format json: exit 2, valid JSON generated.
-- Checked snapshot schema, record counts, finding counts and proposal counts for consistency: passed.
-- Compared errors against canonical Project State template, protocol and validator documentation.
+Manual core-report, rollup-proposals and core-snapshot all completed against the
+private Project OS: 12 states across 8 projects, 3 schema errors, 6 warnings and
+2 proposals, with zero source-read failures. These validation findings return
+runtime status findings / exit 0. Existing CLI semantics remain unchanged.
 
-## Verification results
-The live read path is verified: 12 state records across 8 projects, no reported read/authentication failures. Source health is NOT clean: 3 missing-field errors and 6 warnings. Nonzero report/snapshot exits reflect correctly detected source-state errors, not a crash.
+Docker liveness uses a local heartbeat and makes no GitHub requests. Rich health
+reports runtime availability plus the last completed manual run and timestamps.
+An isolated Compose probe with a dummy invalid credential produced
+source_read_failure / exit 3 while Docker remained healthy. After removing that
+probe, health returned unavailable / exit 1. The production credential was untouched.
+Probe containers/network were removed; private diagnostic artifacts remain on host.
 
-Missing fields:
-- homelab-infrastructure/.project/state.yaml: dependencies, important_open_loops.
-- recipe-intelligence-system/.project/state.yaml: dependencies, important_open_loops.
-- The centrally stored Career state: dependencies.
+## Checks and local artifacts
+- 44 tests passed: 29 existing plus 15 runtime tests covering findings, source errors,
+  sanitized software failures, output persistence and concurrent-job exclusion.
+- Image built successfully; Compose started and waited for healthy service.
+- Fresh SSH connection and forced container recreation preserved health, logs and snapshot.
+- Host runtime directory mode 700; service.log and latest.json mode 600.
+- Snapshot: ~/.local/state/personal-ai-brain/runtime/runs/20260924T182758Z-00fab03b/core-snapshot.json.
+- Report run: 20260924T182804Z-db984a6c; proposals run: 20260924T182808Z-f0561f94.
+- Logs/results: ~/.local/state/personal-ai-brain/runtime (outside repository).
+- service.log rotates at 1 MB with three backups; private per-run outputs have manual retention.
 
-Warnings:
-- Two rollups are older than their active workstreams.
-- Four states exceed their configured freshness thresholds.
+## Manual operations
+From ~/projects/personal-ai-brain:
 
-All required fields are explicitly required by the canonical v0.2 template and protocol. No implementation defect was established; no schema/freshness checks were disabled. Homelab's proposal correctly requires manual synthesis. Recipe's proposal is based on its one active workstream. Neither proposal was applied.
+```sh
+sh scripts/runtime.sh up
+sh scripts/runtime.sh core-report
+sh scripts/runtime.sh rollup-proposals
+sh scripts/runtime.sh core-snapshot
+sh scripts/runtime.sh health
+sh scripts/runtime.sh logs
+```
 
-## Live Homelab state
-Manual CLI execution is installed and verified on this Python version. Media services were not changed. There is no new Docker deployment, scheduler, daemon or autonomous write capability.
+Use `sh scripts/runtime.sh down` to stop this Compose project while retaining host
+outputs. Health reflects the last manual source read, not continuous connectivity.
+See docs/homelab-runtime.md for exit codes, secret handling and lifecycle details.
 
-## Blockers / risks
-Source-state omissions need owner-led repair; do not invent empty dependencies or fresh verification dates simply to make checks green. Full reports contain private Project OS information and must stay off the public repository. Token read access is verified; the user-selected absence of write permissions was not independently audited. Persistent reliability and notification/error-handling behavior are still untested.
+## Remaining source findings
+Existing missing fields remain in the Homelab root state (dependencies,
+important_open_loops), Recipe root state (same), and centrally stored Career state
+(dependencies). Two older rollups and four freshness warnings were observed.
+No owner facts were invented, proposals applied or unrelated freshness dates changed.
+Private raw reports remain off the public repository. Media services were unchanged.
 
-## Exact next action
-Route the three missing-field findings to the owning states and record their disposition, then implement bounded v0.3 persistent read-only runtime through a branch and PR. Keep meaningful findings visible without treating every freshness warning as a failed deployment.
+## Scope boundary and exact next action
+The minimum persistent manual runtime is complete. Scheduling, Telegram, n8n,
+MCP, LLM reasoning, general remote-shell API, autonomous Project OS writes and
+broader orchestration remain unimplemented by design. Do not equate this slice
+with completion of all broader v0.3 ambitions.
+
+Continue operating the deployed runtime and route existing state findings to their
+owners. Scope any new automation separately. Do not repeat bootstrap, token setup,
+package discovery or the prior v0.2 acceptance unless diagnosing a new failure.
 
 ## Project State impact
-.project/state.yaml updated and synced.
-
-## Notes for ChatGPT
-First live acceptance is complete as an execution/read-path check, with genuine source-data findings still open. The machine-access, missing-venv and authentication blockers are resolved. Do not send Igor through token/bootstrap setup again. Public handoff contains only technical findings; private report details remain on Homelab.
+.project/state.yaml advances to homelab-persistent-readonly-runtime-verified because
+the deployment, permission boundary and health behavior were actually exercised.

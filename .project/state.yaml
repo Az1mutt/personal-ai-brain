@@ -6,99 +6,83 @@ project:
   owner: "Project OS & Agent Architecture chat"
 
 status: "active"
-phase: "homelab-live-read-verified"
+phase: "homelab-persistent-readonly-runtime-verified"
 
 current_gate: >
-  The first live private Project OS read path is verified on Homelab.
-  Review the recorded source-state schema/freshness findings with their owners,
-  then establish persistent read-only execution with explicit error handling,
-  safe credential injection, logs and controlled triggering.
+  The minimum v0.3 persistent manual read-only runtime is live and verified.
+  Preserve its permission boundary and disposition existing source-state findings
+  with their owners. Define and approve a separate bounded milestone before adding
+  scheduling, notifications, integrations or autonomous behavior.
 
 current_state: >
-  Personal AI Brain v0.2 is implementation-complete in main. Core Agent provides
-  deterministic read-only Project OS discovery and reporting. Agent Contract +
-  Registry defines agent responsibilities, inputs/outputs, tool/resource
-  permissions, approvals and future event boundaries. State Integrity detects
-  multi-workstream rollup drift and hard conflicts. RollupProposalEngine produces
-  read-only deterministic repair proposals without inventing shared narratives
-  when multiple blocking workstreams require semantic synthesis. Core snapshots
-  expose machine-readable JSON/YAML for future runtime/orchestrator consumers.
-  PR #6 completed the final pre-runtime quality layer: Project State v0.2 schema,
-  type, scope and sync.storage validation plus attention-aware freshness policy,
-  configurable YAML thresholds, deferred/parked/future noise suppression and
-  per-project/workstream freshness overrides. GitHub Actions run #23 passed before
-  PR #6 was squash-merged. The Core Agent still has no GitHub write capability,
-  LLM planner, scheduler, database or autonomous execution path.
-  On 2026-09-24 the package was installed in an isolated Homelab virtualenv
-  using Python 3.14.4, PyYAML 6.0.3 and pytest 8.4.2. All 29 tests passed
-  and agents validate passed for one read-only agent. The runtime credential
-  is provisioned outside Git with file mode 600; its value was not displayed.
-  The first live run read 12 state records across 8 projects and generated
-  a Markdown report, two rollup proposals and a consistent JSON snapshot.
-  core-report and core-snapshot returned 2 because three source states omit
-  required schema fields; rollup-proposals returned 0. Six freshness/rollup
-  warnings were also observed. These findings match the canonical v0.2 schema;
-  no implementation defect was established and no validator was weakened.
-  Private outputs remain outside the public checkout. This proves one manual
-  live read run, not unattended runtime reliability or clean source-state health.
+  The v0.2 deterministic Core Agent, Agent Registry, state integrity/schema/freshness
+  validation, rollup proposals and machine snapshots remain read-only and unchanged.
+  On 2026-09-24 the minimum v0.3 runtime was packaged as a digest-pinned Python
+  Docker image and deployed with Compose on Homelab. The detached service uses
+  restart unless-stopped; Docker is enabled at boot. It survives SSH termination
+  and container recreation, with private lifecycle logs and per-run outputs in
+  a host directory outside Git. The existing credential is a read-only file secret,
+  not an image, environment or command-line secret. The container runs as the host
+  owner with a read-only root, dropped capabilities and no network listener or
+  Docker socket. Three explicit manual operations produce reports, proposals and
+  snapshots. Local heartbeat liveness is separate from the last manual source-read
+  result. Existing source validation errors produce findings, not a dead runtime.
+  All 44 tests passed on Homelab. Live execution of all three operations read
+  12 states across 8 projects, with 3 existing schema errors, 6 warnings and
+  2 proposals; no source-read failures. An isolated invalid-credential probe
+  returned source_read_failure while Docker remained healthy. A stopped probe
+  returned runtime unavailable. Logs and snapshots survived container recreation.
+  No scheduler, Telegram, n8n, MCP, LLM, remote-shell API or Project OS write
+  capability was introduced. This completes the persistent manual runtime slice,
+  not all future v0.3 scheduling/notification work or a long-duration reliability test.
 
 exact_next_action: >
-  Use docs/handoffs/CODEX_TO_CHATGPT.md to route the three missing-field
-  findings to the owning Project OS/project states without inventing facts
-  or changing verification dates just to clear warnings. Once the findings
-  have an explicit disposition, implement the bounded v0.3 persistent
-  read-only runtime through the repository's branch/PR workflow.
+  Continue from docs/handoffs/CODEX_TO_CHATGPT.md and operate the existing service
+  with scripts/runtime.sh. Have source-state owners disposition the three
+  missing-field findings and two proposals without inventing facts or refreshing
+  dates merely to silence warnings. Separately scope the next approved milestone;
+  do not repeat bootstrap, token setup or the completed v0.2 acceptance.
 
 blockers:
   - >
-      Source-state health is not clean: three states omit required fields,
-      while six warnings identify old rollups or freshness-policy age.
-      Connectivity, package installation and authentication are verified.
-  - >
-      Persistent execution, scheduling, service health and notification
-      behavior remain unimplemented and unverified.
+      Source-state health remains non-clean: three states omit required fields
+      and six warnings identify old rollups or freshness-policy age. These are
+      data-quality findings, not blockers to the verified runtime/read path.
 
 dependencies:
   - project: "Personal Project Brain / Project OS"
     dependency: "Provides project-map.yaml and durable Project/Workstream States consumed by Core Agent."
   - project: "Homelab & Media Stack"
-    dependency: "Preferred persistent runtime host for Docker, scheduling and local integrations."
+    dependency: "Hosts the detached Docker runtime, existing credential and private persistent outputs."
 
 important_open_loops:
-  - "Disposition source-state findings from the completed live acceptance run."
-  - "Review the two generated rollup proposals; Homelab explicitly requires manual synthesis."
-  - "JSON snapshot consistency is verified; YAML output and persistent consumers remain future checks."
-  - "Have state owners resolve missing required fields without weakening schema checks or falsifying freshness."
-  - "Design and implement Docker packaging for the Homelab runtime."
-  - "Implement read-only GitHub secret injection without committing credentials."
-  - "Add manual/scheduled trigger, run logs, health checks and low-noise notifications."
-  - "Evaluate n8n as event/orchestration glue after the base runtime is reliable."
-  - "Define the first real second agent, likely Repo Steward, after Core Agent runtime behavior is proven."
-  - "Add LLM/planner/orchestrator layers only where semantic judgment adds value."
-  - "Retain PostgreSQL/pgvector/Ollama as a future Memory & Knowledge subsystem."
+  - "Disposition source-state findings with their owners; do not weaken validation or falsify freshness."
+  - "Review the two generated rollup proposals; Homelab requires manual synthesis."
+  - "Health describes the last manual source read, not continuous GitHub connectivity."
+  - "Per-run private artifacts require manual retention management; lifecycle logs rotate."
+  - "Whole-host reboot and long-duration reliability have not been exercised."
+  - "Scheduling and low-noise notifications need a separate approved milestone."
+  - "Evaluate n8n or a second agent only after the bounded base runtime is established."
+  - "LLM/planner/orchestrator and PostgreSQL/pgvector/Ollama remain future layers."
 
 portfolio:
   milestone: true
   signal: >
-    Personal AI Brain now has a CI-tested read-only multi-agent platform core with
-    explicit agent contracts/permissions, deterministic Project OS integrity and
-    schema validation, attention-aware freshness policy, rollup repair proposals
-    and machine-readable automation outputs. The project is ready to move from
-    environment-independent platform design into a persistent Homelab runtime.
+    Personal AI Brain now has a live persistent read-only Homelab runtime with
+    manual reports/proposals/snapshots, secure file credential injection, durable
+    local outputs and distinct runtime/source/data health. Autonomous writes and
+    scheduling remain outside the implemented scope.
 
 verification:
   last_verified: "2026-09-24"
   sources:
-    - "2026-09-24 Homelab acceptance: 29 tests passed; 1 agent validated; 12 states / 8 projects; 3 schema errors / 6 warnings / 2 rollup proposals."
-    - "Private reports: ~/.local/state/personal-ai-brain/acceptance-20260924T180722Z; report and snapshot exit 2 on source-state errors, proposals exit 0."
-    - "Bootstrap ensurepip prerequisite resolved by user; venv installation succeeded."
+    - "Homelab: 44 tests passed (29 existing plus 15 runtime boundary tests)."
+    - "Three live container jobs: 12 states / 8 projects; 3 errors / 6 warnings / 2 proposals; source_read_failures=0."
+    - "Snapshot run 20260924T182758Z-00fab03b; outputs under ~/.local/state/personal-ai-brain/runtime."
+    - "Fresh SSH and container recreation: healthy runtime, persistent snapshot/logs; Docker enabled at boot."
+    - "Isolated dummy-credential run: source_read_failure exit 3, Docker healthy; stopped probe health exit 1."
+    - "docs/homelab-runtime.md"
     - "docs/handoffs/CODEX_TO_CHATGPT.md"
-    - "personal-ai-brain PR #3: Add Agent Contract and Registry foundation"
-    - "personal-ai-brain PR #4: Add deterministic Project State integrity checks"
-    - "personal-ai-brain PR #5: Add rollup proposals and machine-readable Core snapshots"
-    - "personal-ai-brain PR #6: Complete v0.2 state schema and freshness quality layer"
-    - "GitHub Actions workflow tests run #23: success"
-    - "main merge commit edeba8bf5c37689315b858aeb3413b722d5c2090"
 
 sync:
   status: "synced"

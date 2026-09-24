@@ -1,0 +1,43 @@
+name: personal-ai-brain
+services:
+  core:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: personal-ai-brain:local
+    user: "${PAB_UID:?Set PAB_UID}:${PAB_GID:?Set PAB_GID}"
+    init: true
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 64
+    mem_limit: 256m
+    cpus: 1.0
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=16m,mode=1777
+    environment:
+      PAB_STATE_DIR: /state
+      GITHUB_TOKEN_FILE: /run/secrets/github_token
+    secrets:
+      - github_token
+    volumes:
+      - type: bind
+        source: ${PAB_STATE_DIR:?Set PAB_STATE_DIR}
+        target: /state
+        bind:
+          create_host_path: false
+    healthcheck:
+      test: [CMD, python, -m, personal_ai_brain.runtime, health, --liveness]
+      interval: 10s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+    logging:
+      driver: local
+      options:
+        max-size: 5m
+        max-file: "3"
+secrets:
+  github_token:
+    file: ${PAB_GITHUB_TOKEN_FILE:?Set PAB_GITHUB_TOKEN_FILE}
