@@ -81,6 +81,9 @@ verification:
     - "Snapshot run 20260924T182758Z-00fab03b; outputs under ~/.local/state/personal-ai-brain/runtime."
     - "Fresh SSH and container recreation: healthy runtime, persistent snapshot/logs; Docker enabled at boot."
     - "Isolated dummy-credential run: source_read_failure exit 3, Docker healthy; stopped probe health exit 1."
+    - "PR #7 squash-merged as 329835c9d28f47bf05b47ee6b0f2dd30e908f868; final-head tests workflow run #31 succeeded."
+    - "Merged main checkout matched deployed code and was clean; service remained healthy."
+    - "Final-code snapshot: 20260924T183747Z-124c04d2; same counts and zero source-read failures."
     - "docs/homelab-runtime.md"
     - "docs/handoffs/CODEX_TO_CHATGPT.md"
 

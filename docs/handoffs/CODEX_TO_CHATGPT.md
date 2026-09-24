@@ -1,7 +1,7 @@
 # Codex → ChatGPT Handoff
 
 ## Timestamp
-2026-09-24 20:35 Europe/Bratislava
+2026-09-24 20:41 Europe/Bratislava
 
 ## Scope
 Minimum v0.3 persistent READ-ONLY Homelab runtime. The earlier v0.2 live acceptance
@@ -10,7 +10,11 @@ was already complete and was not repeated as a bootstrap/setup exercise.
 ## Environment
 - Host: Igor's Linux Homelab; private connection details omitted.
 - Repo: Az1mutt/personal-ai-brain, ~/projects/personal-ai-brain.
-- Change branch: feat/homelab-readonly-runtime, through branch/PR workflow.
+- Deployed checkout: main, implementation merge 329835c9d28f47bf05b47ee6b0f2dd30e908f868.
+- PR #7 squash-merged after tests workflow run #31 succeeded on the final PR head.
+- Homelab checkout matched the merged tree exactly and was clean; running service healthy.
+- Local feature branch removed. Merged remote feat/homelab-readonly-runtime remains:
+  the available GitHub connector has no branch-deletion operation.
 - Implementation PR: https://github.com/Az1mutt/personal-ai-brain/pull/7.
 - Deployment: Docker Compose project personal-ai-brain, service core.
 - Runtime: digest-pinned Python 3.14 slim image, pinned PyYAML 6.0.3.
@@ -48,7 +52,8 @@ Probe containers/network were removed; private diagnostic artifacts remain on ho
 - Fresh SSH connection and forced container recreation preserved health, logs and snapshot.
 - Host runtime directory mode 700; service.log and latest.json mode 600.
 - Existing credential value checked absent from staged files, image history and runtime outputs.
-- Snapshot: ~/.local/state/personal-ai-brain/runtime/runs/20260924T182758Z-00fab03b/core-snapshot.json.
+- Final-code snapshot: ~/.local/state/personal-ai-brain/runtime/runs/20260924T183747Z-124c04d2/core-snapshot.json.
+- Earlier snapshot 20260924T182758Z-00fab03b also verified intact after recreation.
 - Report run: 20260924T182804Z-db984a6c; proposals run: 20260924T182808Z-f0561f94.
 - Logs/results: ~/.local/state/personal-ai-brain/runtime (outside repository).
 - service.log rotates at 1 MB with three backups; private per-run outputs have manual retention.
