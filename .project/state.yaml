@@ -6,7 +6,7 @@ project:
   owner: "Project OS & Agent Architecture chat"
 
 status: "active"
-phase: "homelab-runtime-v0.3-ready"
+phase: "homelab-live-acceptance-bootstrap"
 
 current_gate: >
   Run the complete read-only v0.2 platform against the real private Project OS
@@ -29,19 +29,25 @@ current_state: >
   per-project/workstream freshness overrides. GitHub Actions run #23 passed before
   PR #6 was squash-merged. The Core Agent still has no GitHub write capability,
   LLM planner, scheduler, database or autonomous execution path.
+  On 2026-09-24, direct Homelab SSH access and outbound GitHub access were
+  verified and main at 62afa941b5eec128f9f50f3c6928ef0f42fd9ac1 was cloned
+  into ~/projects/personal-ai-brain. Python 3.14.4, Git 2.53.0, Docker
+  29.7.2 and Compose 5.5.0 are available. Virtualenv creation failed because
+  ensurepip/python3.14-venv is missing. Installation and tests have not run.
 
 exact_next_action: >
-  On Igor's own PC or Homelab, clone/pull personal-ai-brain, provide a read-only
-  GitHub token for the private personal-project-brain repository, install the
-  package, and run core-report, rollup-proposals and core-snapshot against live
-  Project OS data. Capture any real-data findings and fix genuine schema/policy
-  mismatches before Docker/persistent-service packaging.
+  Igor runs the prepared interactive prerequisite helper on Homelab to install
+  python3.14-venv using sudo and enter a fine-grained read-only GitHub token.
+  Then Codex recreates the venv, installs the package, runs pytest and agents
+  validate, and performs the live core-report, rollup-proposals and JSON snapshot.
+  Record evidence before any Docker or persistent-service packaging.
 
 blockers:
   - >
-      The first live private-repository acceptance run requires access to Igor's
-      own PC or Homelab plus a read-capable GitHub token; the current work laptop
-      is intentionally not used for that runtime test.
+      python3.14-venv is missing and sudo requires interactive authentication.
+      A read-only token for private personal-project-brain has not yet been
+      provisioned for the Homelab runtime. The separate Codex connector does
+      not provide credentials to this Python process.
 
   - >
       Persistent deployment details such as Docker layout, secret injection,
@@ -77,8 +83,10 @@ portfolio:
     environment-independent platform design into a persistent Homelab runtime.
 
 verification:
-  last_verified: "2026-09-17"
+  last_verified: "2026-09-24"
   sources:
+    - "2026-09-24 SSH bootstrap: clone verified; venv failed with missing ensurepip; sudo requires interactive authentication."
+    - "docs/handoffs/CODEX_TO_CHATGPT.md"
     - "personal-ai-brain PR #3: Add Agent Contract and Registry foundation"
     - "personal-ai-brain PR #4: Add deterministic Project State integrity checks"
     - "personal-ai-brain PR #5: Add rollup proposals and machine-readable Core snapshots"
