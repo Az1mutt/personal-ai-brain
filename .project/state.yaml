@@ -27,7 +27,7 @@ current_state: >
   Docker socket. Three explicit manual operations produce reports, proposals and
   snapshots. Local heartbeat liveness is separate from the last manual source-read
   result. Existing source validation errors produce findings, not a dead runtime.
-  All 44 tests passed on Homelab. Live execution of all three operations read
+  All 46 tests passed on Homelab. Live execution of all three operations read
   12 states across 8 projects, with 3 existing schema errors, 6 warnings and
   2 proposals; no source-read failures. An isolated invalid-credential probe
   returned source_read_failure while Docker remained healthy. A stopped probe
@@ -76,7 +76,7 @@ portfolio:
 verification:
   last_verified: "2026-09-24"
   sources:
-    - "Homelab: 44 tests passed (29 existing plus 15 runtime boundary tests)."
+    - "Homelab: 46 tests passed (29 existing plus 17 runtime boundary tests)."
     - "Three live container jobs: 12 states / 8 projects; 3 errors / 6 warnings / 2 proposals; source_read_failures=0."
     - "Snapshot run 20260924T182758Z-00fab03b; outputs under ~/.local/state/personal-ai-brain/runtime."
     - "Fresh SSH and container recreation: healthy runtime, persistent snapshot/logs; Docker enabled at boot."

@@ -11,6 +11,7 @@ was already complete and was not repeated as a bootstrap/setup exercise.
 - Host: Igor's Linux Homelab; private connection details omitted.
 - Repo: Az1mutt/personal-ai-brain, ~/projects/personal-ai-brain.
 - Change branch: feat/homelab-readonly-runtime, through branch/PR workflow.
+- Implementation PR: https://github.com/Az1mutt/personal-ai-brain/pull/7.
 - Deployment: Docker Compose project personal-ai-brain, service core.
 - Runtime: digest-pinned Python 3.14 slim image, pinned PyYAML 6.0.3.
 - Existing .venv remains available for tests; no new credential was provisioned.
@@ -41,11 +42,12 @@ probe, health returned unavailable / exit 1. The production credential was untou
 Probe containers/network were removed; private diagnostic artifacts remain on host.
 
 ## Checks and local artifacts
-- 44 tests passed: 29 existing plus 15 runtime tests covering findings, source errors,
+- 46 tests passed: 29 existing plus 17 runtime tests covering findings, source errors,
   sanitized software failures, output persistence and concurrent-job exclusion.
 - Image built successfully; Compose started and waited for healthy service.
 - Fresh SSH connection and forced container recreation preserved health, logs and snapshot.
 - Host runtime directory mode 700; service.log and latest.json mode 600.
+- Existing credential value checked absent from staged files, image history and runtime outputs.
 - Snapshot: ~/.local/state/personal-ai-brain/runtime/runs/20260924T182758Z-00fab03b/core-snapshot.json.
 - Report run: 20260924T182804Z-db984a6c; proposals run: 20260924T182808Z-f0561f94.
 - Logs/results: ~/.local/state/personal-ai-brain/runtime (outside repository).

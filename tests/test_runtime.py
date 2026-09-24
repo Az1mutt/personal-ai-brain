@@ -34,6 +34,17 @@ def test_cached_read_failure_remains_visible(monkeypatch):
     assert runtime.classify(CoreSnapshot("2026-09-24"), reader.read_failures) == ("source_read_failure", 3)
 
 
+@pytest.mark.parametrize("error", [TimeoutError("network timeout"), json.JSONDecodeError("invalid", "", 0)])
+def test_transport_and_api_response_failures_are_source_failures(monkeypatch, error):
+    reader = runtime.RunReader("fake-token")
+    def fail(*args):
+        raise error
+    monkeypatch.setattr(reader.reader, "get_text", fail)
+    _, snapshot, proposals = runtime.collect(reader)
+    assert runtime.classify(snapshot, reader.read_failures) == ("source_read_failure", 3)
+    assert proposals == []
+
+
 def test_unreadable_project_map_does_not_crash_collector():
     class Reader:
         def get_text(self, *args):

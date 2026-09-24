@@ -54,6 +54,10 @@ class RunReader:
             except GitHubReadError as error:
                 self.read_failures += 1
                 self.cache[key] = error
+            except (OSError, ValueError):
+                # Socket timeouts and invalid API JSON may escape the legacy reader.
+                self.read_failures += 1
+                self.cache[key] = GitHubReadError("Source response unavailable or invalid")
         value = self.cache[key]
         if isinstance(value, Exception):
             raise value
