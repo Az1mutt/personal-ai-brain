@@ -9,7 +9,7 @@ status: "active"
 phase: "control-bridge-homelab-verified-chatgpt-acceptance-pending"
 
 current_gate: >
-  Complete v0.4A repository closure and external ChatGPT connector acceptance.
+  Complete external ChatGPT connector acceptance for the merged, deployed v0.4A bridge.
   The Homelab worker and private Issues transport have passed internal verification.
   ChatGPT itself must create runtime.health and core.health requests and read the
   correlated worker results before the overall bridge is declared accepted.
@@ -38,8 +38,8 @@ current_state: >
   checks, not proof of the external ChatGPT connector path.
 
 exact_next_action: >
-  Follow docs/handoffs/CODEX_TO_CHATGPT.md for PR/checks/merge closure, then have
-  the ChatGPT project chat create fresh UUID/timestamp runtime.health and
+  Follow docs/handoffs/CODEX_TO_CHATGPT.md and have the ChatGPT project chat
+  create fresh UUID/timestamp runtime.health and
   core.health issues through its own GitHub connector and read the correlated
   results. Record actual issue references before closing the external acceptance
   gate. Do not repeat bootstrap/token setup or the completed v0.2 acceptance.
@@ -57,7 +57,7 @@ dependencies:
     dependency: "Hosts Core and control containers, separate credentials and durable private audit."
 
 important_open_loops:
-  - "Complete repository closure and independent ChatGPT runtime.health/core.health acceptance."
+  - "Complete independent ChatGPT runtime.health/core.health acceptance; PR/merge/deploy/branch cleanup are done."
   - "Preserve the deduplication ledger; do not deploy independent ledgers for the same queue."
   - "Whole-host reboot, long-duration reliability and audit retention remain operator checks."
   - "Token expiry/revocation must be handled by the owner; transport health exposes failures."
@@ -82,6 +82,9 @@ verification:
     - "Live source read: 12 states / 3 schema errors / 6 warnings / 2 proposals."
     - "Isolated invalid-token worker: authentication_permission_failure, backoff >=60 seconds, Docker healthy; probe removed."
     - "Core and control containers healthy after fresh SSH/recreation; private audit modes 700/600."
+    - "PR #8 merged as 585d9e9a2f8159c93eda6c8568de50c33415d9f8 after CI run #34; local/remote branch removed."
+    - "Merged main control image rebuilt; both services healthy; manual Core snapshot 20260925T071629Z-c6a7d730 succeeded."
+    - "Both credentials absent from indexed files, image history, audit and container environment values; runtime boundaries inspected."
     - "docs/control-bridge.md"
     - "docs/handoffs/CODEX_TO_CHATGPT.md"
 

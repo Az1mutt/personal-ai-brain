@@ -1,12 +1,16 @@
 # Codex → ChatGPT Handoff
 
-## Verified checkpoint — 2026-09-25
+## Verified result — 2026-09-25 09:18 Europe/Bratislava
 
-v0.4A Homelab control bridge is implemented and internally verified on branch
-`feat/homelab-control-bridge`, based on main `2b00742d63af49b0fabea76567b2b678a5c05672`.
-PR/checks/merge closure is the next repository step. Final **ChatGPT connector →
-GitHub → Homelab → result → ChatGPT acceptance is pending**. Codex did not claim
-its own requests prove the external ChatGPT path.
+The v0.4A **Homelab side is complete**, merged and deployed on `main`.
+[PR #8](https://github.com/Az1mutt/personal-ai-brain/pull/8) was squash-merged as
+`585d9e9a2f8159c93eda6c8568de50c33415d9f8` after tests workflow run #34 passed
+on tested head `538d20843a8046fbaff18cdba9927f949d7f4a76`. The Homelab checkout
+matched the merged tree and was clean; the control image was rebuilt from main.
+The implementation branch was deleted locally and on GitHub.
+
+Final **ChatGPT connector → GitHub → Homelab → result → ChatGPT acceptance is
+pending**. Codex did not claim its own requests prove the external ChatGPT path.
 
 ## Completed work and architecture
 
@@ -63,6 +67,12 @@ Issues result comments/closure. No source-state file is written by the worker.
 - Isolated dummy-token worker reported authentication_permission_failure with
   at least 60-second backoff while Docker liveness remained healthy; probe removed.
 - Core remained healthy and retained its prior manual reports/snapshot/logs.
+- After merge/rebuild, both service health checks passed. Original manual Core
+  produced snapshot `20260925T071629Z-c6a7d730` with 12 states, 3 errors, 6 warnings,
+  2 proposals, no source-read failures and exit 0.
+- Both credential values checked absent from all indexed files, image history,
+  private audit and container environment values. Inspected live mounts, UID,
+  capabilities, read-only roots and absence of host ports/Docker socket.
 
 ## Exact ChatGPT-side acceptance procedure — pending
 
@@ -138,7 +148,8 @@ limits are in `docs/control-bridge.md`.
 
 ## Exact next action
 
-Close the implementation branch through PR/checks/merge and verify main checkout
-and both deployed health statuses. Then hand the acceptance procedure above to
-the ChatGPT project chat. Do not repeat bootstrap, token creation, package discovery
-or the prior v0.2 acceptance unless diagnosing a new failure.
+Have the ChatGPT project chat carry out the independent acceptance procedure above
+through its own GitHub connector and record the actual issue/result references.
+The implementation PR, merge, deployment and branch cleanup are complete.
+Do not repeat bootstrap, token creation, package discovery or the prior v0.2
+acceptance unless diagnosing a new failure.
