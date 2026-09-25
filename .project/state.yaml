@@ -6,13 +6,13 @@ project:
   owner: "Project OS & Agent Architecture chat"
 
 status: "active"
-phase: "control-bridge-homelab-verified-chatgpt-acceptance-pending"
+phase: "control-bridge-v0.4a-externally-accepted"
 
 current_gate: >
-  Complete external ChatGPT connector acceptance for the merged, deployed v0.4A bridge.
-  The Homelab worker and private Issues transport have passed internal verification.
-  ChatGPT itself must create runtime.health and core.health requests and read the
-  correlated worker results before the overall bridge is declared accepted.
+  The v0.4A universal Homelab control bridge is externally accepted end to end.
+  Preserve the transport/capability/permission separation and define the next
+  separately approved domain-capability milestone, likely bounded Media capabilities,
+  without introducing generic shell or unrestricted infrastructure control.
 
 current_state: >
   The persistent v0.3 read-only Core remains healthy with unchanged source-read
@@ -34,21 +34,19 @@ current_state: >
   private comments and issue closure. Core read 12 states with 3 errors, 6 warnings
   and 2 proposals. Audit survived worker recreation; replay after recreation did
   not change the original execution record. An isolated invalid-token worker
-  reported auth failure/backoff while remaining alive. These are Codex internal
-  checks, not proof of the external ChatGPT connector path.
+  reported auth failure/backoff while remaining alive. Independent ChatGPT connector
+  acceptance then succeeded through private Issues #28 and #29: runtime.health
+  returned runtime=available and core.health returned fresh source_status=findings
+  with 12 states, 3 errors, 6 warnings and 2 proposals. Both returned matching
+  request IDs and were closed by the Homelab worker.
 
 exact_next_action: >
-  Follow docs/handoffs/CODEX_TO_CHATGPT.md and have the ChatGPT project chat
-  create fresh UUID/timestamp runtime.health and
-  core.health issues through its own GitHub connector and read the correlated
-  results. Record actual issue references before closing the external acceptance
-  gate. Do not repeat bootstrap/token setup or the completed v0.2 acceptance.
+  Scope v0.4B as the first domain-capability milestone. Start with bounded Media
+  capabilities that can serve the Plex/Media chat through the existing control
+  plane, preferring application-level APIs such as Seerr for controlled request
+  actions and preserving explicit risk/approval boundaries.
 
-blockers:
-  - "ChatGPT-originated connector-to-Homelab acceptance remains pending."
-  - >
-      Existing source-state findings remain: three required-field errors and six
-      freshness/rollup warnings. They do not imply a runtime or transport failure.
+blockers: []
 
 dependencies:
   - project: "Personal Project Brain / Project OS"
@@ -57,7 +55,7 @@ dependencies:
     dependency: "Hosts Core and control containers, separate credentials and durable private audit."
 
 important_open_loops:
-  - "Complete independent ChatGPT runtime.health/core.health acceptance; PR/merge/deploy/branch cleanup are done."
+  - "Define v0.4B Media capability contracts and risk boundaries before enabling any media write action."
   - "Preserve the deduplication ledger; do not deploy independent ledgers for the same queue."
   - "Whole-host reboot, long-duration reliability and audit retention remain operator checks."
   - "Token expiry/revocation must be handled by the owner; transport health exposes failures."
@@ -68,10 +66,12 @@ important_open_loops:
 portfolio:
   milestone: true
   signal: >
-    The persistent read-only Core now has an internally verified reusable Homelab
+    The persistent read-only Core now has an externally accepted reusable Homelab
     control bridge with private Issues transport, strict capability boundaries,
-    persistent audit and duplicate-execution protection. External ChatGPT acceptance
-    is explicitly pending; no infrastructure or Project OS write capability exists.
+    persistent audit and duplicate-execution protection. ChatGPT independently
+    invoked runtime.health and core.health through the connector and received
+    correlated Homelab results. No infrastructure or Project OS write capability
+    exists.
 
 verification:
   last_verified: "2026-09-25"
@@ -85,6 +85,8 @@ verification:
     - "PR #8 merged as 585d9e9a2f8159c93eda6c8568de50c33415d9f8 after CI run #34; local/remote branch removed."
     - "Merged main control image rebuilt; both services healthy; manual Core snapshot 20260925T071629Z-c6a7d730 succeeded."
     - "Both credentials absent from indexed files, image history, audit and container environment values; runtime boundaries inspected."
+    - "ChatGPT external acceptance Issue #28: runtime.health completed, runtime=available, request ID correlated, issue closed."
+    - "ChatGPT external acceptance Issue #29: core.health completed, source_status=findings, 12 states / 3 errors / 6 warnings / 2 proposals, request ID correlated, issue closed."
     - "docs/control-bridge.md"
     - "docs/handoffs/CODEX_TO_CHATGPT.md"
 
