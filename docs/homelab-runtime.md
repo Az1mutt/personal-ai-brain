@@ -80,7 +80,17 @@ current GitHub connectivity, silently refresh old source results or hide their a
 A healthy Docker container may therefore have a source read failure, which is
 shown explicitly by the richer status. Source validation errors never kill the
 keeper or mark Docker liveness unhealthy. Startup failure, missing heartbeat or a
-dead process does. Results survive recreation; the heartbeat does not.
+dead process does. Results survive recreation. Compose now places the Core heartbeat in its host
+state directory so the separate control worker can read it through a read-only
+mount. Graceful shutdown removes it; a crash leaves a file that expires after
+30 seconds. No Docker socket or remote shell is needed for this read.
+
+## Optional v0.4A control worker
+
+The Core service above still has no writer or scheduler. A separate worker adds
+bounded private Issues requests; see [control bridge](control-bridge.md).
+Start it with `sh scripts/control.sh up`; `control.sh down` stops only that worker.
+The original Core credential and manual operations remain unchanged.
 
 ## Verification
 

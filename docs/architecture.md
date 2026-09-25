@@ -18,6 +18,21 @@ Markdown / CLI report
 
 No LLM, database, scheduler or write-capable tool is required for this slice.
 
+## v0.4A — bounded control plane
+
+```text
+Caller → private GitHub Issues adapter → strict control request
+       → read-only capability registry → explicit Python handler → Core
+       ← correlated sanitized result ← private audit / deduplication ledger
+```
+
+Transport, capability and permission are separate. The registry declares risk,
+argument validation and effects; only read-only handlers register in this slice.
+The Issues worker uses a separate credential, cannot write Project State content,
+and has no shell, Docker socket, host administration or dynamic execution path.
+Request IDs are reserved durably before invocation. Interrupted execution is not
+automatically retried. See [control bridge](control-bridge.md) for exact semantics.
+
 ## Target architecture
 
 ```text
@@ -119,6 +134,8 @@ It must not overwrite explicit operational state with inferred memory.
 
 ## Deployment
 
-Initial execution can be manual from a developer machine.
-
-After Homelab migration closure, the preferred persistent runtime is Docker on the Ubuntu Server host. Deployment, scheduling and secrets management are later milestones.
+Core runs in a detached non-root Docker service with manual operations and private
+host logs/results. A separate Compose project runs the outbound-only control
+poller with its own durable private audit directory. It mounts Core state read-only
+and receives the separate Issues and source-read credentials as file secrets.
+General scheduling, notification and infrastructure-write capabilities remain deferred.

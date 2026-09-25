@@ -1,10 +1,11 @@
-name: personal-ai-brain
+name: personal-ai-brain-control
 services:
-  core:
+  control:
     build:
       context: .
       dockerfile: docker/Dockerfile
-    image: personal-ai-brain:local
+    image: personal-ai-brain:control
+    command: [python, -m, personal_ai_brain.control_worker, serve]
     user: "${PAB_UID:?Set PAB_UID}:${PAB_GID:?Set PAB_GID}"
     init: true
     restart: unless-stopped
@@ -14,23 +15,32 @@ services:
     pids_limit: 64
     mem_limit: 256m
     cpus: 1.0
+    stop_grace_period: 210s
     tmpfs:
       - /tmp:rw,noexec,nosuid,size=16m,mode=1777
     environment:
-      PAB_STATE_DIR: /state
-      PAB_HEARTBEAT: /state/heartbeat.json
+      PAB_CONTROL_STATE: /control
+      PAB_POLL_SECONDS: "30"
       GITHUB_TOKEN_FILE: /run/secrets/github_token
+      CONTROL_TOKEN_FILE: /run/secrets/github_control_token
     secrets:
       - github_token
+      - github_control_token
     volumes:
       - type: bind
         source: ${PAB_STATE_DIR:?Set PAB_STATE_DIR}
-        target: /state
+        target: /core-state
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${PAB_CONTROL_STATE:?Set PAB_CONTROL_STATE}
+        target: /control
         bind:
           create_host_path: false
     healthcheck:
-      test: [CMD, python, -m, personal_ai_brain.runtime, health, --liveness]
-      interval: 10s
+      test: [CMD, python, -m, personal_ai_brain.control_worker, health, --liveness]
+      interval: 15s
       timeout: 5s
       start_period: 10s
       retries: 3
@@ -42,3 +52,5 @@ services:
 secrets:
   github_token:
     file: ${PAB_GITHUB_TOKEN_FILE:?Set PAB_GITHUB_TOKEN_FILE}
+  github_control_token:
+    file: ${PAB_CONTROL_TOKEN_FILE:?Set PAB_CONTROL_TOKEN_FILE}
