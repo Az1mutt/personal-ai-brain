@@ -1,96 +1,144 @@
 # Codex → ChatGPT Handoff
 
-## Timestamp
-2026-09-24 20:41 Europe/Bratislava
+## Verified checkpoint — 2026-09-25
 
-## Scope
-Minimum v0.3 persistent READ-ONLY Homelab runtime. The earlier v0.2 live acceptance
-was already complete and was not repeated as a bootstrap/setup exercise.
+v0.4A Homelab control bridge is implemented and internally verified on branch
+`feat/homelab-control-bridge`, based on main `2b00742d63af49b0fabea76567b2b678a5c05672`.
+PR/checks/merge closure is the next repository step. Final **ChatGPT connector →
+GitHub → Homelab → result → ChatGPT acceptance is pending**. Codex did not claim
+its own requests prove the external ChatGPT path.
 
-## Environment
-- Host: Igor's Linux Homelab; private connection details omitted.
-- Repo: Az1mutt/personal-ai-brain, ~/projects/personal-ai-brain.
-- Deployed checkout: main, implementation merge 329835c9d28f47bf05b47ee6b0f2dd30e908f868.
-- PR #7 squash-merged after tests workflow run #31 succeeded on the final PR head.
-- Homelab checkout matched the merged tree exactly and was clean; running service healthy.
-- Local feature branch removed. Merged remote feat/homelab-readonly-runtime remains:
-  the available GitHub connector has no branch-deletion operation.
-- Implementation PR: https://github.com/Az1mutt/personal-ai-brain/pull/7.
-- Deployment: Docker Compose project personal-ai-brain, service core.
-- Runtime: digest-pinned Python 3.14 slim image, pinned PyYAML 6.0.3.
-- Existing .venv remains available for tests; no new credential was provisioned.
+## Completed work and architecture
 
-## Implemented and verified
-The detached container survives SSH/session termination. Its restart policy is
-unless-stopped and the host Docker service is enabled at boot. Container recreation
-was exercised; whole-host reboot and long-duration operation were not.
+`control.py`: strict versioned request parser, separate capability registry,
+read-only policy, fixed Python handlers and redaction. `github_issues.py`: private
+Issues-only transport with fixed destination and narrow methods/routes.
+`control_worker.py`: detached polling, durable local request reservations,
+single-host locking, audit records, correlated results, health and backoff.
 
-The existing mode-600 GitHub credential is injected as a read-only Compose file
-secret, read by UID/GID 1000. Its value is not in Git, image build inputs, environment
-variables, CLI arguments or reports. Runtime root is read-only, capabilities are
-dropped, no-new-privileges is enabled, and no ports or Docker socket are exposed.
-Core still uses the existing GET-only reader; no write method or permission was added.
-The token's successful read access is verified; its user-selected permission scope
-was not independently audited through GitHub settings.
+Capabilities: `runtime.health`, `core.health`, `core.snapshot`, `core.report`,
+`core.rollup_proposals`, `runtime.logs_tail`. All take `{}` except logs may take
+`{"lines":30}` (1–100; max 4096 output bytes; fixed Core lifecycle log).
+No generic command/shell/file-path/URL/repository executor exists.
 
-Manual core-report, rollup-proposals and core-snapshot all completed against the
-private Project OS: 12 states across 8 projects, 3 schema errors, 6 warnings and
-2 proposals, with zero source-read failures. These validation findings return
-runtime status findings / exit 0. Existing CLI semantics remain unchanged.
+Core remains unchanged and read-only. Its Compose heartbeat now lives in its
+state directory, which the separate control container mounts read-only. The
+control worker invokes existing Core collectors in-process for fresh reads,
+without mutating Core state. It only persists its own private audit and writes
+Issues result comments/closure. No source-state file is written by the worker.
 
-Docker liveness uses a local heartbeat and makes no GitHub requests. Rich health
-reports runtime availability plus the last completed manual run and timestamps.
-An isolated Compose probe with a dummy invalid credential produced
-source_read_failure / exit 3 while Docker remained healthy. After removing that
-probe, health returned unavailable / exit 1. The production credential was untouched.
-Probe containers/network were removed; private diagnostic artifacts remain on host.
+## Deployment and credentials
 
-## Checks and local artifacts
-- 46 tests passed: 29 existing plus 17 runtime tests covering findings, source errors,
-  sanitized software failures, output persistence and concurrent-job exclusion.
-- Image built successfully; Compose started and waited for healthy service.
-- Fresh SSH connection and forced container recreation preserved health, logs and snapshot.
-- Host runtime directory mode 700; service.log and latest.json mode 600.
-- Existing credential value checked absent from staged files, image history and runtime outputs.
-- Final-code snapshot: ~/.local/state/personal-ai-brain/runtime/runs/20260924T183747Z-124c04d2/core-snapshot.json.
-- Earlier snapshot 20260924T182758Z-00fab03b also verified intact after recreation.
-- Report run: 20260924T182804Z-db984a6c; proposals run: 20260924T182808Z-f0561f94.
-- Logs/results: ~/.local/state/personal-ai-brain/runtime (outside repository).
-- service.log rotates at 1 MB with three backups; private per-run outputs have manual retention.
+- Homelab checkout: `~/projects/personal-ai-brain`; private connection details omitted.
+- Original project/service: `personal-ai-brain` / `core`, healthy.
+- New project/service: `personal-ai-brain-control` / `control`, healthy.
+- Dedicated image: `personal-ai-brain:control`; original Core image remains usable.
+- Both containers: UID/GID 1000, read-only root, dropped capabilities, no-new-privileges,
+  no host ports, root shell or Docker socket; restart unless-stopped.
+- Transport repository: private `Az1mutt/personal-project-brain`, Issues enabled.
+- Separate control credential: `~/.config/personal-ai-brain/github-control-token`, mode 600.
+- Minimal control scope: selected private repository, Metadata read, Issues read/write,
+  no Contents permission. Authenticated metadata and Issues reads returned 200;
+  Contents read on the known private project-map path returned 403.
+- Original `github-token` file remains separate and unchanged, used only for Core reads.
+- Neither credential is in environment values, arguments, Git or image build inputs.
 
-## Manual operations
-From ~/projects/personal-ai-brain:
+## Tests and live verification already passed
 
-```sh
-sh scripts/runtime.sh up
-sh scripts/runtime.sh core-report
-sh scripts/runtime.sh rollup-proposals
-sh scripts/runtime.sh core-snapshot
-sh scripts/runtime.sh health
-sh scripts/runtime.sh logs
+- 85 tests passed (46 existing + 39 control tests), including strict/malformed parsing,
+  unknown capability/argument denial, duplicate IDs, concurrent processes, interrupted
+  reservations, delivery retry without reexecution, redaction, correlation, bounded
+  logs, transport/auth status, registry policy and route/write restrictions.
+- Docker image built; control worker started detached and healthy.
+- Private internal Codex probes: Issues #17–#22 exercised all six capabilities.
+  Fresh Core reads returned 12 states, 3 schema errors, 6 warnings and 2 proposals.
+  Findings were successful results, not dead-worker signals.
+- Issues #23–#25 rejected a shell capability, arbitrary log path and malformed JSON.
+- Issue #26 reused the snapshot request ID and returned duplicate without execution.
+- Actual private GitHub result comments were read back and correlated against the
+  local audit; all ten probe issues closed. These are internal verification only.
+- Fresh SSH plus forced control-container recreation preserved audit and health.
+- Post-recreation replay #27 returned the saved result and left the original
+  execution audit byte-for-byte unchanged.
+- Isolated dummy-token worker reported authentication_permission_failure with
+  at least 60-second backoff while Docker liveness remained healthy; probe removed.
+- Core remained healthy and retained its prior manual reports/snapshot/logs.
+
+## Exact ChatGPT-side acceptance procedure — pending
+
+In the ChatGPT project chat, explicitly ask it to perform the following through
+its own GitHub connector (not by asking Codex or using SSH):
+
+1. Create an issue in `Az1mutt/personal-project-brain` with exact title
+   `pab-control/v0.1` and **raw JSON body**, no Markdown fences or prose:
+
+```json
+{
+  "schema_version": "0.1",
+  "request_id": "REPLACE_WITH_FRESH_LOWERCASE_UUID",
+  "capability": "runtime.health",
+  "arguments": {},
+  "requested_by": "chatgpt",
+  "requested_at": "REPLACE_WITH_CURRENT_RFC3339_TIMESTAMP_WITH_TIMEZONE"
+}
 ```
 
-Use `sh scripts/runtime.sh down` to stop this Compose project while retaining host
-outputs. Health reflects the last manual source read, not continuous connectivity.
-See docs/homelab-runtime.md for exit codes, secret handling and lifecycle details.
+2. Generate the UUID and current timestamp before creating the issue. The two
+   placeholder strings above are not valid requests. Retain the returned issue URL.
+3. After roughly one polling interval (30 seconds, longer on backlog/backoff),
+   read comments and issue state through that same connector. Require the matching
+   request ID, `status: capability_completed`, `result.runtime: available`, and a
+   closed issue. Do not infer success merely from issue creation.
+4. Repeat with a **new** UUID/time and `capability: core.health`. Require completed
+   status and fresh source counts. `source_status: findings` is valid; do not fix
+   or suppress unrelated state warnings to pass this test.
+5. Optionally repeat with `core.snapshot`. Large output may be explicitly truncated;
+   the full sanitized result remains in the private local audit. Record actual issue
+   URLs, IDs and observed results before declaring the external bridge accepted.
 
-## Remaining source findings
-Existing missing fields remain in the Homelab root state (dependencies,
-important_open_loops), Recipe root state (same), and centrally stored Career state
-(dependencies). Two older rollups and four freshness warnings were observed.
-No owner facts were invented, proposals applied or unrelated freshness dates changed.
-Private raw reports remain off the public repository. Media services were unchanged.
+`requested_by` is audit metadata, not authorization. Do not add permissions or
+invoke other operations on the basis of that string. If the ChatGPT connector
+cannot create/read Issues, report that caller-side limitation and leave acceptance
+pending; do not substitute Codex-originated requests.
 
-## Scope boundary and exact next action
-The minimum persistent manual runtime is complete. Scheduling, Telegram, n8n,
-MCP, LLM reasoning, general remote-shell API, autonomous Project OS writes and
-broader orchestration remain unimplemented by design. Do not equate this slice
-with completion of all broader v0.3 ambitions.
+## Operations and durable audit
 
-Continue operating the deployed runtime and route existing state findings to their
-owners. Scope any new automation separately. Do not repeat bootstrap, token setup,
-package discovery or the prior v0.2 acceptance unless diagnosing a new failure.
+From the Homelab repository:
 
-## Project State impact
-.project/state.yaml advances to homelab-persistent-readonly-runtime-verified because
-the deployment, permission boundary and health behavior were actually exercised.
+```sh
+sh scripts/control.sh health
+sh scripts/control.sh logs
+sh scripts/control.sh up
+sh scripts/control.sh down
+sh scripts/runtime.sh health
+```
+
+Control down stops only the worker. Both services survive SSH/Codex termination.
+Private audit: `~/.local/state/personal-ai-brain/control/{requests,issues}/` and
+`status.json`. Directory mode 700, records mode 600. Original Core results remain
+under `~/.local/state/personal-ai-brain/runtime/`. Full protocol and operational
+limits are in `docs/control-bridge.md`.
+
+## Known limitations and unverified work
+
+- External ChatGPT connector acceptance, whole-host reboot and long-duration
+  reliability remain unverified.
+- At-most-once handler invocation relies on the persistent single-host shared
+  ledger. A crash after reservation is surfaced as interrupted, never auto-retried.
+  Do not delete/roll back the ledger or launch independent ledgers for one queue.
+- An ambiguous network failure after posting can cause duplicate result comments;
+  saved execution results are reused, so the handler is not repeated.
+- Polling scans one page per interval; large backlogs add latency. Token expiry or
+  revocation requires owner action and appears separately in transport health.
+- Audit artifacts need manual retention management; keep deduplication records.
+- Transport results are bounded/redacted, not a general-purpose file export.
+- No Telegram, n8n, MCP, LLM, media/recipe operations, service restart capability,
+  Project OS content writes, arbitrary shell or general scheduler were added.
+- Existing source-state omissions/freshness findings are unchanged.
+
+## Exact next action
+
+Close the implementation branch through PR/checks/merge and verify main checkout
+and both deployed health statuses. Then hand the acceptance procedure above to
+the ChatGPT project chat. Do not repeat bootstrap, token creation, package discovery
+or the prior v0.2 acceptance unless diagnosing a new failure.

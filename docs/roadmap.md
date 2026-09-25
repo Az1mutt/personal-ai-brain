@@ -60,11 +60,12 @@ Implemented:
 
 The remaining live validation against the private Project OS is intentionally carried into v0.3 as the first runtime acceptance task. This avoids blocking the platform foundation on access to Igor's personal machine while still requiring a real-data run before persistent automation is considered proven.
 
-## v0.3 — Persistent Homelab runtime — NEXT
+## v0.3 — Persistent Homelab runtime — manual slice verified
 
 Goal: move the proven read-only platform from interactive development into a reliable local runtime.
 
-Planned:
+Original scope (manual runtime, secrets, live reads, logs and health are now verified;
+periodic Core scheduling, notifications and n8n remain deferred):
 
 - clone/install on the Ubuntu Homelab host
 - read-only GitHub token/secrets handling
@@ -80,7 +81,18 @@ Planned:
 
 **Exit gate:** Core Agent runs reliably without an interactive ChatGPT session and produces useful, low-noise state output from real Project OS data.
 
-## v0.4 — Repo Steward
+## v0.4A — Universal read-only Homelab control bridge
+
+Current approved slice: a transport-independent capability registry with strict
+request validation, private GitHub Issues as the first adapter, persistent polling,
+local audit and deduplication, and six bounded read-only capabilities. No source
+writes, shell execution, media handlers or integration framework is added.
+
+Homelab implementation and internal transport verification are distinct from the
+final ChatGPT connector acceptance. The rolling handoff records both explicitly.
+See [control bridge](control-bridge.md). Repo Steward remains a separate future step.
+
+## Future — Repo Steward
 
 First write-capable specialist agent.
 

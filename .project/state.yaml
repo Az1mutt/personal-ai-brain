@@ -6,85 +6,83 @@ project:
   owner: "Project OS & Agent Architecture chat"
 
 status: "active"
-phase: "homelab-persistent-readonly-runtime-verified"
+phase: "control-bridge-homelab-verified-chatgpt-acceptance-pending"
 
 current_gate: >
-  The minimum v0.3 persistent manual read-only runtime is live and verified.
-  Preserve its permission boundary and disposition existing source-state findings
-  with their owners. Define and approve a separate bounded milestone before adding
-  scheduling, notifications, integrations or autonomous behavior.
+  Complete v0.4A repository closure and external ChatGPT connector acceptance.
+  The Homelab worker and private Issues transport have passed internal verification.
+  ChatGPT itself must create runtime.health and core.health requests and read the
+  correlated worker results before the overall bridge is declared accepted.
 
 current_state: >
-  The v0.2 deterministic Core Agent, Agent Registry, state integrity/schema/freshness
-  validation, rollup proposals and machine snapshots remain read-only and unchanged.
-  On 2026-09-24 the minimum v0.3 runtime was packaged as a digest-pinned Python
-  Docker image and deployed with Compose on Homelab. The detached service uses
-  restart unless-stopped; Docker is enabled at boot. It survives SSH termination
-  and container recreation, with private lifecycle logs and per-run outputs in
-  a host directory outside Git. The existing credential is a read-only file secret,
-  not an image, environment or command-line secret. The container runs as the host
-  owner with a read-only root, dropped capabilities and no network listener or
-  Docker socket. Three explicit manual operations produce reports, proposals and
-  snapshots. Local heartbeat liveness is separate from the last manual source-read
-  result. Existing source validation errors produce findings, not a dead runtime.
-  All 46 tests passed on Homelab. Live execution of all three operations read
-  12 states across 8 projects, with 3 existing schema errors, 6 warnings and
-  2 proposals; no source-read failures. An isolated invalid-credential probe
-  returned source_read_failure while Docker remained healthy. A stopped probe
-  returned runtime unavailable. Logs and snapshots survived container recreation.
-  No scheduler, Telegram, n8n, MCP, LLM, remote-shell API or Project OS write
-  capability was introduced. This completes the persistent manual runtime slice,
-  not all future v0.3 scheduling/notification work or a long-duration reliability test.
+  The persistent v0.3 read-only Core remains healthy with unchanged source-read
+  credential, validators and manual operations. v0.4A adds a separate detached
+  control worker, transport-independent strict request/capability layer, and
+  private GitHub Issues as its first adapter. Six allowlisted read-only handlers
+  provide runtime health, fresh Core health/snapshot/report/proposals and bounded
+  redacted lifecycle logs. No generic command, shell, file path or Docker API is
+  exposed. A separate Issues read/write credential has no Contents access; live
+  metadata/Issues checks returned 200 and private Contents returned 403.
+  Both credentials are injected as file secrets. The worker has a read-only Core
+  state mount and its own private persistent audit directory. Fsynced request
+  reservations plus a shared host lock prevent repeat execution and concurrent
+  duplicates. Interrupted execution is not automatically retried. Result posting
+  retries reuse saved data. Transport health and request findings are separate
+  from process liveness. Default polling is 30 seconds with bounded backoff and
+  server rate-limit deadlines. On 2026-09-25 all 85 tests passed. Internal live
+  probes exercised all six capabilities, invalid requests, duplicate IDs, correlated
+  private comments and issue closure. Core read 12 states with 3 errors, 6 warnings
+  and 2 proposals. Audit survived worker recreation; replay after recreation did
+  not change the original execution record. An isolated invalid-token worker
+  reported auth failure/backoff while remaining alive. These are Codex internal
+  checks, not proof of the external ChatGPT connector path.
 
 exact_next_action: >
-  Continue from docs/handoffs/CODEX_TO_CHATGPT.md and operate the existing service
-  with scripts/runtime.sh. Have source-state owners disposition the three
-  missing-field findings and two proposals without inventing facts or refreshing
-  dates merely to silence warnings. Separately scope the next approved milestone;
-  do not repeat bootstrap, token setup or the completed v0.2 acceptance.
+  Follow docs/handoffs/CODEX_TO_CHATGPT.md for PR/checks/merge closure, then have
+  the ChatGPT project chat create fresh UUID/timestamp runtime.health and
+  core.health issues through its own GitHub connector and read the correlated
+  results. Record actual issue references before closing the external acceptance
+  gate. Do not repeat bootstrap/token setup or the completed v0.2 acceptance.
 
 blockers:
+  - "ChatGPT-originated connector-to-Homelab acceptance remains pending."
   - >
-      Source-state health remains non-clean: three states omit required fields
-      and six warnings identify old rollups or freshness-policy age. These are
-      data-quality findings, not blockers to the verified runtime/read path.
+      Existing source-state findings remain: three required-field errors and six
+      freshness/rollup warnings. They do not imply a runtime or transport failure.
 
 dependencies:
   - project: "Personal Project Brain / Project OS"
-    dependency: "Provides project-map.yaml and durable Project/Workstream States consumed by Core Agent."
+    dependency: "Provides read-only source states and private Issues command/result transport; worker cannot write source content."
   - project: "Homelab & Media Stack"
-    dependency: "Hosts the detached Docker runtime, existing credential and private persistent outputs."
+    dependency: "Hosts Core and control containers, separate credentials and durable private audit."
 
 important_open_loops:
-  - "Disposition source-state findings with their owners; do not weaken validation or falsify freshness."
-  - "Review the two generated rollup proposals; Homelab requires manual synthesis."
-  - "Health describes the last manual source read, not continuous GitHub connectivity."
-  - "Per-run private artifacts require manual retention management; lifecycle logs rotate."
-  - "Whole-host reboot and long-duration reliability have not been exercised."
-  - "Scheduling and low-noise notifications need a separate approved milestone."
-  - "Evaluate n8n or a second agent only after the bounded base runtime is established."
-  - "LLM/planner/orchestrator and PostgreSQL/pgvector/Ollama remain future layers."
+  - "Complete repository closure and independent ChatGPT runtime.health/core.health acceptance."
+  - "Preserve the deduplication ledger; do not deploy independent ledgers for the same queue."
+  - "Whole-host reboot, long-duration reliability and audit retention remain operator checks."
+  - "Token expiry/revocation must be handled by the owner; transport health exposes failures."
+  - "Resolve existing source findings with their owners without weakening validation or falsifying freshness."
+  - "Media, Recipe, Telegram, n8n, MCP and write capabilities require separately approved milestones."
+  - "LLM/planner/orchestrator and database/memory layers remain deferred."
 
 portfolio:
   milestone: true
   signal: >
-    Personal AI Brain now has a live persistent read-only Homelab runtime with
-    manual reports/proposals/snapshots, secure file credential injection, durable
-    local outputs and distinct runtime/source/data health. Autonomous writes and
-    scheduling remain outside the implemented scope.
+    The persistent read-only Core now has an internally verified reusable Homelab
+    control bridge with private Issues transport, strict capability boundaries,
+    persistent audit and duplicate-execution protection. External ChatGPT acceptance
+    is explicitly pending; no infrastructure or Project OS write capability exists.
 
 verification:
-  last_verified: "2026-09-24"
+  last_verified: "2026-09-25"
   sources:
-    - "Homelab: 46 tests passed (29 existing plus 17 runtime boundary tests)."
-    - "Three live container jobs: 12 states / 8 projects; 3 errors / 6 warnings / 2 proposals; source_read_failures=0."
-    - "Snapshot run 20260924T182758Z-00fab03b; outputs under ~/.local/state/personal-ai-brain/runtime."
-    - "Fresh SSH and container recreation: healthy runtime, persistent snapshot/logs; Docker enabled at boot."
-    - "Isolated dummy-credential run: source_read_failure exit 3, Docker healthy; stopped probe health exit 1."
-    - "PR #7 squash-merged as 329835c9d28f47bf05b47ee6b0f2dd30e908f868; final-head tests workflow run #31 succeeded."
-    - "Merged main checkout matched deployed code and was clean; service remained healthy."
-    - "Final-code snapshot: 20260924T183747Z-124c04d2; same counts and zero source-read failures."
-    - "docs/homelab-runtime.md"
+    - "85 tests passed on Homelab: 46 existing plus 39 control tests."
+    - "Private internal probes #17-26: six capabilities, three rejections, duplicate, correlated comments and closure."
+    - "Replay #27 after worker recreation returned duplicate with original execution audit unchanged."
+    - "Live source read: 12 states / 3 schema errors / 6 warnings / 2 proposals."
+    - "Isolated invalid-token worker: authentication_permission_failure, backoff >=60 seconds, Docker healthy; probe removed."
+    - "Core and control containers healthy after fresh SSH/recreation; private audit modes 700/600."
+    - "docs/control-bridge.md"
     - "docs/handoffs/CODEX_TO_CHATGPT.md"
 
 sync:

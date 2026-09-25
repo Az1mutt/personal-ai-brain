@@ -159,6 +159,14 @@ sh scripts/runtime.sh logs
 See [Homelab runtime operations and health contract](docs/homelab-runtime.md).
 Project State findings remain visible without marking the runtime dead.
 
+## Read-only control bridge
+
+The v0.4A worker accepts strict JSON requests through private GitHub Issues and
+returns bounded, sanitized results. Its capability registry is independent of
+GitHub. Core remains read-only; the separate transport can only post issue results
+and close requests. See [control protocol and operations](docs/control-bridge.md).
+ChatGPT-originated end-to-end acceptance is tracked separately in the handoff.
+
 ## Repository structure
 
 ```text
