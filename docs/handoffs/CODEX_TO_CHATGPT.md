@@ -9,8 +9,9 @@ on tested head `538d20843a8046fbaff18cdba9927f949d7f4a76`. The Homelab checkout
 matched the merged tree and was clean; the control image was rebuilt from main.
 The implementation branch was deleted locally and on GitHub.
 
-Final **ChatGPT connector → GitHub → Homelab → result → ChatGPT acceptance is
-pending**. Codex did not claim its own requests prove the external ChatGPT path.
+Final **ChatGPT connector → GitHub → Homelab → result → ChatGPT acceptance is complete**.
+The independent project-chat test used the ChatGPT GitHub connector itself; Codex/SSH
+were not used for the caller side.
 
 ## Completed work and architecture
 
@@ -74,7 +75,7 @@ Issues result comments/closure. No source-state file is written by the worker.
   private audit and container environment values. Inspected live mounts, UID,
   capabilities, read-only roots and absence of host ports/Docker socket.
 
-## Exact ChatGPT-side acceptance procedure — pending
+## Independent ChatGPT-side acceptance — completed
 
 In the ChatGPT project chat, explicitly ask it to perform the following through
 its own GitHub connector (not by asking Codex or using SSH):
@@ -106,6 +107,27 @@ its own GitHub connector (not by asking Codex or using SSH):
    the full sanitized result remains in the private local audit. Record actual issue
    URLs, IDs and observed results before declaring the external bridge accepted.
 
+### Observed external acceptance results
+
+- Issue #28: https://github.com/Az1mutt/personal-project-brain/issues/28
+  - capability: `runtime.health`
+  - request_id: `a853b102-f4b7-4133-860e-73acdb20416a`
+  - result: `status=capability_completed`, `runtime=available`, `health_exit=0`
+  - issue closed as completed; returned request ID matched exactly.
+- Issue #29: https://github.com/Az1mutt/personal-project-brain/issues/29
+  - capability: `core.health`
+  - request_id: `0d1e8aa5-7255-45bc-b1d6-68942d2a7e2c`
+  - result: `status=capability_completed`, `source_status=findings`
+  - fresh counts: 12 states, 3 errors, 6 warnings, 2 rollup proposals
+  - issue closed as completed; returned request ID matched exactly.
+
+This proves the first complete external path:
+
+```text
+ChatGPT connector → private GitHub Issue → Homelab control worker
+→ allow-listed capability → correlated Issue result → ChatGPT connector
+```
+
 `requested_by` is audit metadata, not authorization. Do not add permissions or
 invoke other operations on the basis of that string. If the ChatGPT connector
 cannot create/read Issues, report that caller-side limitation and leave acceptance
@@ -131,8 +153,7 @@ limits are in `docs/control-bridge.md`.
 
 ## Known limitations and unverified work
 
-- External ChatGPT connector acceptance, whole-host reboot and long-duration
-  reliability remain unverified.
+- Whole-host reboot and long-duration reliability remain unverified.
 - At-most-once handler invocation relies on the persistent single-host shared
   ledger. A crash after reservation is surfaced as interrupted, never auto-retried.
   Do not delete/roll back the ledger or launch independent ledgers for one queue.
@@ -148,8 +169,8 @@ limits are in `docs/control-bridge.md`.
 
 ## Exact next action
 
-Have the ChatGPT project chat carry out the independent acceptance procedure above
-through its own GitHub connector and record the actual issue/result references.
-The implementation PR, merge, deployment and branch cleanup are complete.
-Do not repeat bootstrap, token creation, package discovery or the prior v0.2
-acceptance unless diagnosing a new failure.
+The v0.4A bridge is externally accepted. Scope the next separately approved
+domain-capability milestone without weakening the bridge permission model.
+The likely next slice is v0.4B Media capabilities, beginning with bounded
+media discovery/status and then controlled request actions through an application
+gateway such as Seerr. Do not introduce arbitrary shell/Docker execution.
