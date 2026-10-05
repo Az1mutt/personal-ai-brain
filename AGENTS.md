@@ -8,6 +8,20 @@ Build a local-first personal multi-agent platform incrementally, with explicit s
 
 Before any task that will write to GitHub, read the current `AGENTS.md` from the repository default branch. Do not rely on an older chat copy of these rules when the repository version is available.
 
+## Token and context efficiency
+
+Optimize for useful verified work per token. Do not trade away correctness, safety, or required freshness.
+
+- Reuse verified durable state/evidence when still sufficient; do not re-check the same stable fact by default.
+- Re-verify only when freshness matters, evidence conflicts, state is stale/unknown, the action is high-risk, implementation may have changed, or Igor asks.
+- Avoid duplicate documentation; update the authoritative artifact instead of creating near-copies.
+- Prefer concise deltas, exact next actions, and links/references over repeating full history.
+- Retrieve narrowly and avoid repeated full-file reads or broad scans when a known range/result is enough.
+- Stop research once evidence is sufficient; add more only when it materially improves confidence or coverage.
+- Prefer deterministic reusable operations, cached/structured artifacts, and existing Skills where they safely reduce repeated LLM work.
+
+If extra retrieval, verification, or documentation will not materially change the answer, reduce meaningful risk, or create reusable value, skip it.
+
 ## Current implementation priority
 
 Core Agent v0.1 is read-only.
