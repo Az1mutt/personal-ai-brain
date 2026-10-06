@@ -61,11 +61,51 @@ high-water mark. The migration itself does not seed personal event IDs, copy the
 558 historical events, or alter existing movie, rating, watched, CSFD or external
 identity rows.
 
+## Tautulli reconciliation
+
+`personal-ai-brain watched-reconcile` runs one bounded batch and exits so the
+existing Homelab scheduler can invoke it periodically. It reads completed movie
+and episode sessions incrementally from Tautulli SQLite and uses a read-only Plex
+metadata GET to obtain stable GUIDs. Only an explicit numeric TMDb GUID is
+accepted by the built-in resolver; unresolved identity is quarantined.
+
+The cursor is stored in `source_cursors` under source `plex` and the configured
+account scope as `{"kind":"tautulli_history_id","value":N}`. A new account scope
+requires an explicitly accepted initial watermark, preventing accidental Plex
+history backfill. Normal reads start at a small bounded overlap. Known overlap
+events count as duplicates; unseen rows at or below the cursor are intentionally
+not imported.
+
+Each event is ingested durably before its cursor position advances. If the
+process stops between those commits, the next run re-reads the event, source-ID
+deduplication returns the existing canonical event, and the cursor advances.
+Quarantined identity is a durable handled result. A malformed payload, source
+failure, or other unsafe error records cursor failure time, stops the batch, and
+does not advance past that position.
+
+Example scheduler command (paths and account values remain private runtime
+configuration):
+
+```sh
+personal-ai-brain watched-reconcile \
+  --media-db /path/to/media.db \
+  --tautulli-db /path/to/tautulli.db \
+  --tautulli-user ACCOUNT \
+  --account-scope ACCOUNT_SCOPE \
+  --plex-url http://plex:32400 \
+  --plex-token-file /run/secrets/plex_token \
+  --initial-watermark ACCEPTED_HISTORY_ID
+```
+
+After the first successful invocation, omit `--initial-watermark`; the durable
+cursor is reused. The command contains no Plex or Trakt write operation and does
+not create `sync_deliveries`.
+
 ## Explicitly deferred
 
-- live migration of the production `media.db` and private watermark seeding;
-- webhook listener, polling scheduler and reconciliation service;
+- deployment or periodic scheduling of the reconciliation command;
+- webhook listener or persistent polling framework;
 - Trakt API client or any Trakt write;
-- Plex API client or any Plex write;
+- any Plex write client or operation;
 - ratings, deletes, unwatch propagation and historical Plex backfill;
 - automatic identity inference, LLM matching or LLM retry decisions.
