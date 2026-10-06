@@ -167,6 +167,14 @@ GitHub. Core remains read-only; the separate transport can only post issue resul
 and close requests. See [control protocol and operations](docs/control-bridge.md).
 ChatGPT-originated end-to-end acceptance is tracked separately in the handoff.
 
+## Watched Event Ledger
+
+Watched Event Ledger v0.1 adds the additive SQLite event foundation, deterministic
+deduplication and delivery state machine, plus a pure read-only Plex/Tautulli
+observation normalizer. It contains no Plex or Trakt write client and does not
+copy the completed historical migration. See the
+[ledger contract](docs/watched-event-ledger.md).
+
 ## Repository structure
 
 ```text
@@ -174,11 +182,13 @@ ChatGPT-originated end-to-end acceptance is tracked separately in the handoff.
 agents/                           declarative agent contracts
 config/                           deterministic runtime/policy configuration
 src/personal_ai_brain/            Python package
+src/personal_ai_brain/sql/        packaged additive SQLite migrations
 tests/                            deterministic unit tests
 docs/vision.md                    long-term destination
 docs/architecture.md              architecture and boundaries
 docs/agent-contract.md            agent permission/contract model
 docs/state-quality.md             Project State schema/freshness rules
+docs/watched-event-ledger.md      watched-event and delivery contracts
 docs/roadmap.md                   staged implementation plan
 database/                         reserved for future memory/state services
 docker/                           minimal read-only runtime image
