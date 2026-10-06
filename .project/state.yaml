@@ -6,13 +6,14 @@ project:
   owner: "Project OS & Agent Architecture chat"
 
 status: "active"
-phase: "control-bridge-v0.4a-externally-accepted"
+phase: "watched-event-ledger-v0.1-component-verified"
 
 current_gate: >
-  The v0.4A universal Homelab control bridge is externally accepted end to end.
-  Preserve the transport/capability/permission separation and define the next
-  separately approved domain-capability milestone, likely bounded Media capabilities,
-  without introducing generic shell or unrestricted infrastructure control.
+  Watched Event Ledger v0.1 is component-tested and migration-safe on a private
+  copy of the current media.db. The next separate acceptance must apply the
+  additive migration with a backup, seed the private historical migration
+  watermark, and verify one new read-only Plex observation without any Plex or
+  Trakt write.
 
 current_state: >
   The persistent v0.3 read-only Core remains healthy with unchanged source-read
@@ -38,13 +39,20 @@ current_state: >
   acceptance then succeeded through private Issues #28 and #29: runtime.health
   returned runtime=available and core.health returned fresh source_status=findings
   with 12 states, 3 errors, 6 warnings and 2 proposals. Both returned matching
-  request IDs and were closed by the Homelab worker.
+  request IDs and were closed by the Homelab worker. Watched Event Ledger v0.1
+  adds four additive SQLite tables, deterministic observation deduplication,
+  explicit rewatches and corrections, external event links, restart-safe delivery
+  states, historical boundary suppression, and a pure read-only Plex/Tautulli
+  normalizer. It adds no network writer and copies none of the completed 558
+  historical Trakt events. All 104 tests passed on Linux on 2026-10-06. Applying
+  the migration to a private copy of the current media.db left all four existing
+  tables logically unchanged and created every new table empty.
 
 exact_next_action: >
-  Scope v0.4B as the first domain-capability milestone. Start with bounded Media
-  capabilities that can serve the Plex/Media chat through the existing control
-  plane, preferring application-level APIs such as Seerr for controlled request
-  actions and preserving explicit risk/approval boundaries.
+  Run a separate live ledger acceptance: back up media.db, apply the additive
+  migration, seed the private 558/558 Trakt migration high-water mark, normalize
+  and ingest one genuinely new Plex observation, and verify exactly one ledger
+  event with no outbound Plex or Trakt delivery.
 
 blockers: []
 
@@ -55,6 +63,9 @@ dependencies:
     dependency: "Hosts Core and control containers, separate credentials and durable private audit."
 
 important_open_loops:
+  - "Deploy and accept the additive ledger migration separately; v0.1 is component-tested but not live-deployed."
+  - "Seed the private historical Trakt boundary before any reconciliation poll so the completed 558/558 migration cannot replay."
+  - "Webhook/polling runtime, Trakt delivery client, ratings, deletes and Plex write-back remain unimplemented."
   - "Define v0.4B Media capability contracts and risk boundaries before enabling any media write action."
   - "Preserve the deduplication ledger; do not deploy independent ledgers for the same queue."
   - "Whole-host reboot, long-duration reliability and audit retention remain operator checks."
@@ -71,11 +82,17 @@ portfolio:
     persistent audit and duplicate-execution protection. ChatGPT independently
     invoked runtime.health and core.health through the connector and received
     correlated Homelab results. No infrastructure or Project OS write capability
-    exists.
+    exists. The watched-history foundation now has an additive canonical event
+    ledger, deterministic deduplication and a fail-closed read-only Plex/Tautulli
+    adapter, with no external write path enabled.
 
 verification:
-  last_verified: "2026-09-25"
+  last_verified: "2026-10-06"
   sources:
+    - "104 Linux tests passed: 85 existing tests plus 19 watched-ledger and Plex/Tautulli adapter tests."
+    - "Migration applied to a private current media.db copy: four existing tables logically unchanged; all four new tables empty."
+    - "No Plex or Trakt client/write path exists in the milestone."
+    - "docs/watched-event-ledger.md"
     - "85 tests passed on Homelab: 46 existing plus 39 control tests."
     - "Private internal probes #17-26: six capabilities, three rejections, duplicate, correlated comments and closure."
     - "Replay #27 after worker recreation returned duplicate with original execution audit unchanged."
