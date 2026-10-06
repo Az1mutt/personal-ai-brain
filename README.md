@@ -175,6 +175,16 @@ observation normalizer. It contains no Plex or Trakt write client and does not
 copy the completed historical migration. See the
 [ledger contract](docs/watched-event-ledger.md).
 
+Run one bounded restart-safe Tautulli reconciliation batch for an already
+bootstrapped private runtime:
+
+```sh
+personal-ai-brain watched-reconcile --help
+```
+
+Scheduling, secrets and the first accepted cursor watermark remain deployment
+concerns; the command itself performs no Plex or Trakt write.
+
 ## Repository structure
 
 ```text
