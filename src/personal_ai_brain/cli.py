@@ -4,6 +4,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
+import sqlite3
 from typing import Any
 
 import yaml
@@ -15,6 +16,14 @@ from personal_ai_brain.machine_snapshot import build_machine_snapshot
 from personal_ai_brain.rollup_proposal import RollupProposalEngine
 from personal_ai_brain.state_integrity import StateIntegrityChecker
 from personal_ai_brain.state_quality import FreshnessPolicy, ProjectStateQualityChecker
+from personal_ai_brain.tautulli_reconciliation import (
+    PlexReadOnlyMetadataClient,
+    ReconciliationError,
+    TautulliSQLiteSource,
+    reconcile_tautulli,
+    resolve_tmdb_identity,
+)
+from personal_ai_brain.watched_ledger import apply_migrations
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -74,6 +83,20 @@ def build_parser() -> argparse.ArgumentParser:
         "validate",
         help="Validate all manifests and registry uniqueness.",
     )
+
+    watched = subparsers.add_parser(
+        "watched-reconcile",
+        help="Reconcile one bounded read-only Tautulli batch into media.db.",
+    )
+    watched.add_argument("--media-db", type=Path, required=True)
+    watched.add_argument("--tautulli-db", type=Path, required=True)
+    watched.add_argument("--tautulli-user", required=True)
+    watched.add_argument("--account-scope", required=True)
+    watched.add_argument("--plex-url", required=True)
+    watched.add_argument("--plex-token-file", type=Path, required=True)
+    watched.add_argument("--initial-watermark", type=int)
+    watched.add_argument("--overlap", type=int, default=2)
+    watched.add_argument("--limit", type=int, default=100)
 
     return parser
 
@@ -222,6 +245,35 @@ def _write_or_print(text: str, output: Path | None) -> None:
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+
+    if args.command == "watched-reconcile":
+        try:
+            token = args.plex_token_file.read_text(encoding="utf-8").strip()
+            plex = PlexReadOnlyMetadataClient(args.plex_url, token)
+            source = TautulliSQLiteSource(
+                args.tautulli_db,
+                user=args.tautulli_user,
+                guid_provider=plex.guids_for,
+            )
+            connection = sqlite3.connect(args.media_db)
+            try:
+                apply_migrations(connection)
+                result = reconcile_tautulli(
+                    connection,
+                    source,
+                    resolve_tmdb_identity,
+                    account_scope=args.account_scope,
+                    initial_watermark=args.initial_watermark,
+                    overlap=args.overlap,
+                    limit=args.limit,
+                )
+            finally:
+                connection.close()
+        except (OSError, ValueError, sqlite3.Error, ReconciliationError) as exc:
+            print(f"Watched reconciliation error: {exc}", file=sys.stderr)
+            return 2
+        print(json.dumps(result.__dict__, sort_keys=True))
+        return 1 if result.failed_position is not None else 0
 
     if args.command == "core-report":
         try:
