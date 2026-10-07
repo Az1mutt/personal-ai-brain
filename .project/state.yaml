@@ -6,14 +6,13 @@ project:
   owner: "Project OS & Agent Architecture chat"
 
 status: "active"
-phase: "watched-tautulli-reconciliation-component-verified"
+phase: "platform-ready-media-domain-parked"
 
 current_gate: >
-  The restart-safe Tautulli reconciliation runner is component-tested. The next
-  separate acceptance must invoke the merged command against the live read-only
-  Tautulli/Plex sources, bootstrap the Plex cursor at accepted history ID 38,
-  confirm the accepted S09E06 observation remains a duplicate, and verify no
-  outbound Plex or Trakt write or delivery.
+  Resume the general Personal AI Brain platform roadmap. The Media domain is safely
+  parked in the Homelab/Media workstream: its first ongoing Trakt delivery remains
+  ambiguous and requires saved-audit reconciliation before any retry. That Media
+  blocker does not block unrelated platform work.
 
 current_state: >
   The persistent v0.3 read-only Core remains healthy with unchanged source-read
@@ -47,20 +46,22 @@ current_state: >
   historical Trakt events. All 104 tests passed on Linux on 2026-10-06. Applying
   the migration to a private copy of the current media.db left all four existing
   tables logically unchanged and created every new table empty.
-  The first live observation acceptance then inserted exactly one Rick and Morty
-  S09E06 event; replay created no duplicate and no delivery. The bounded Tautulli
-  runner now reads only after a durable per-account cursor with safe overlap,
-  uses read-only Plex metadata GUIDs, accepts only deterministic numeric TMDb
-  identity, quarantines unresolved identity, and stops without advancing past an
-  unsafe event. Event ingest precedes cursor advancement, so restart in between
-  is recovered by source-event deduplication. It exposes one CLI command for the
-  existing scheduler and adds no Plex or Trakt writer.
+  The first live observation acceptance inserted exactly one Rick and Morty S09E06
+  event; replay created no duplicate and no delivery. The merged Tautulli runner was
+  then live-accepted on a bounded real window: the durable cursor advanced from 38
+  to 42 only after durable handling, two additional canonical episode events were
+  inserted, replay/re-entry created no duplicates, and Plex/Trakt writes remained
+  zero. Reusable platform patterns now proven include deterministic fingerprints,
+  external-event links, durable source cursors, idempotency keys/request hashes,
+  explicit delivery states, ambiguity-safe restart handling and bounded adapters.
+  Plex, Tautulli, Trakt, Seerr, ARR, Movie Intelligence, media.db and Media policy
+  remain owned by Homelab/Media. The first real Mortgully Trakt delivery is parked
+  there as ambiguous; Personal AI Brain does not own its resolution or Media semantics.
 
 exact_next_action: >
-  After merge, invoke watched-reconcile once on Homelab with the accepted Plex
-  cursor watermark 38 and a private Plex token file. Verify S09E06 is a duplicate,
-  cursor 38 persists, the ledger remains one event/one link/zero deliveries, and
-  no Plex or Trakt write occurs. Schedule it only after this acceptance passes.
+  Continue the next approved general Personal AI Brain platform milestone. Reuse the
+  verified cursor, idempotency, audit and delivery-state patterns where appropriate;
+  leave Mortgully reconciliation and all Media policy changes to Homelab/Media.
 
 blockers: []
 
@@ -71,8 +72,7 @@ dependencies:
     dependency: "Hosts Core and control containers, separate credentials and durable private audit."
 
 important_open_loops:
-  - "Run the live Tautulli cursor bootstrap/replay acceptance before scheduling the command."
-  - "Periodic scheduling, Trakt delivery client, ratings, deletes and Plex write-back remain unimplemented."
+  - "Media scheduling, Trakt delivery, ratings, deletes and Plex write-back are Homelab/Media-owned follow-ups; the Mortgully delivery remains ambiguity-gated."
   - "The completed 558/558 Trakt migration remains outside the ongoing Plex cursor and must not be replayed."
   - "Define v0.4B Media capability contracts and risk boundaries before enabling any media write action."
   - "Preserve the deduplication ledger; do not deploy independent ledgers for the same queue."
@@ -85,18 +85,17 @@ important_open_loops:
 portfolio:
   milestone: true
   signal: >
-    The persistent read-only Core now has an externally accepted reusable Homelab
-    control bridge with private Issues transport, strict capability boundaries,
-    persistent audit and duplicate-execution protection. ChatGPT independently
-    invoked runtime.health and core.health through the connector and received
-    correlated Homelab results. No infrastructure or Project OS write capability
-    exists. The watched-history foundation now has an additive canonical event
-    ledger, deterministic deduplication and a fail-closed read-only Plex/Tautulli
-    adapter, with no external write path enabled.
+    The persistent read-only Core and reusable Homelab control bridge remain accepted.
+    Watched Event Ledger v0.1 and the restart-safe Tautulli reconciliation runner are
+    merged and live-accepted as Media-specific implementations of reusable cursor,
+    idempotency, audit and delivery-state patterns. Media is safely parked in its own
+    workstream with one ambiguous delivery blocker; unrelated platform work can proceed.
 
 verification:
-  last_verified: "2026-10-06"
+  last_verified: "2026-10-07"
   sources:
+    - "Live bounded Tautulli runner acceptance: cursor 38 -> 42, two canonical events inserted, replay/re-entry duplicates 0, Plex/Trakt writes 0."
+    - "Media closure reconciliation retained Mortgully as ambiguous with no closure POST; ownership remains Homelab/Media."
     - "118 Linux tests passed: 104 existing plus 14 Tautulli reconciliation tests."
     - "Restart cases cover before event, after ingest before cursor, after cursor, overlap, partial failure and accepted S09E06 replay."
     - "104 Linux tests passed: 85 existing tests plus 19 watched-ledger and Plex/Tautulli adapter tests."
