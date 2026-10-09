@@ -139,3 +139,10 @@ host logs/results. A separate Compose project runs the outbound-only control
 poller with its own durable private audit directory. It mounts Core state read-only
 and receives the separate Issues and source-read credentials as file secrets.
 General scheduling, notification and infrastructure-write capabilities remain deferred.
+
+## Builder execution proposal
+
+[Builder Execution Plane](builder-execution-plane.md) reconciles the verified
+Homelab environment and proposes the next Work Runner gate. It does not enable
+execution permissions. [Credential inventory](credential-inventory.md) is the
+single platform credential metadata authority; values are never recorded there.
