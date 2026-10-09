@@ -22,6 +22,18 @@ Optimize for useful verified work per token. Do not trade away correctness, safe
 
 If extra retrieval, verification, or documentation will not materially change the answer, reduce meaningful risk, or create reusable value, skip it.
 
+## Temporal context awareness
+
+When reusing older conversation context, Project State, notes, tool output, or prior plans, account for elapsed time instead of treating every past statement as current.
+
+- Treat time-bound or ephemeral state as potentially stale: today's meal, current pantry/fridge contents, open food or drink, current plans, in-progress tasks, mood, weather, temporary availability, live service status, and similar "now" facts.
+- Compare timestamps and relative wording such as `today`, `tomorrow`, `current`, and `now`. Do not silently carry a temporary state forward just because it appears in context.
+- Durable facts and decisions may be reused until superseded. Ephemeral facts should be refreshed, qualified as last-known, or re-confirmed when currentness materially affects correctness.
+- Prefer wording such as `last known on <date>` when useful rather than presenting stale state as present reality.
+- Do not create granular memory, logging, or documentation solely to implement this rule. This is primarily an interpretation rule, not a requirement to store every transient event.
+
+This policy applies across chats, agents, Project State reading, research, planning, and operations.
+
 ## Current implementation priority
 
 Core Agent v0.1 is read-only.
