@@ -6,15 +6,21 @@ project:
   owner: "Project OS & Agent Architecture chat"
 
 status: "active"
-phase: "builder-github-auth-verified-closure-pending"
+phase: "builder-github-auth-complete-work-runner-not-started"
 
 current_gate: >
-  Complete the documentation/authentication PR, CI and merge closure. Builder
-  authentication is installed and the existing reconciliation branch was pushed
-  successfully. Work Runner implementation remains a separate next milestone;
-  no execution identity, task runner or production deployment is enabled.
+  Builder execution reconciliation and dedicated GitHub authentication are closed.
+  Work Runner v0.1 remains the next separately requested implementation milestone.
+  No task execution identity, runner or production deployment is enabled; Media
+  remains parked under Homelab/Media ownership.
 
 current_state: >
+  PR #12 was squash-merged as ed38c0a0ff8a2a4b0b788a5caea63116b982f762 after
+  successful CI run #48 on 434b5e658dfbd785814235763d64b96da6ccda1f.
+  All 125 Linux tests passed, including seven authentication boundary tests.
+  Both remote and local reconciliation branches and the temporary review worktree
+  were removed after merged-content verification. The live deployment checkout
+  and running services were not updated; current repository state is authoritative.
   A dedicated builder fine-grained PAT was installed through hidden input into a
   private mode-600 Homelab file, separate from Core and control credentials.
   Authenticated read, push dry run and the exact prepared branch push at 8f5c19e
@@ -74,9 +80,9 @@ current_state: >
   there as ambiguous; Personal AI Brain does not own its resolution or Media semantics.
 
 exact_next_action: >
-  Finish PR/CI/merge for docs/builder-execution-reconciliation and synchronize this
-  state with the verified merge. Stop after closure; start Work Runner v0.1 only
-  as a separately requested milestone. Media remains parked.
+  Await the next explicit Work Runner v0.1 request. Reuse the accepted execution
+  design and credential provider boundary; implement no further autonomy in this
+  milestone. The reconciliation branch has been merged and cleaned up.
 
 blockers: []
 
@@ -113,6 +119,10 @@ portfolio:
 verification:
   last_verified: "2026-10-10"
   sources:
+    - "PR https://github.com/Az1mutt/personal-ai-brain/pull/12 merged as ed38c0a0ff8a2a4b0b788a5caea63116b982f762."
+    - "CI https://github.com/Az1mutt/personal-ai-brain/actions/runs/38077933098 (run #48) passed for reviewed head 434b5e658dfbd785814235763d64b96da6ccda1f."
+    - "125 Linux tests passed; whitespace checks and tracked-file secret-absence check passed."
+    - "Merged remote/local branch deleted; temporary review worktree removed; deployed source/services unchanged."
     - "Builder credential installed using masked input and SSH stdin; mode 600, parent 700, separate path and owner-supplied expiry 2026-12-09."
     - "Authenticated repository read, push dry run and exact branch push of 8f5c19e succeeded with Git hooks preserved."
     - "scripts/builder_auth/builder_askpass.py"
@@ -146,5 +156,5 @@ verification:
     - "docs/handoffs/CODEX_TO_CHATGPT.md"
 
 sync:
-  status: "pending-review"
+  status: "synced"
   storage: ".project/state.yaml"
