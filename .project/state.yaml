@@ -6,83 +6,45 @@ project:
   owner: "Project OS & Agent Architecture chat"
 
 status: "active"
-phase: "builder-github-auth-complete-work-runner-not-started"
+phase: "work-runner-v01-local-acceptance-verified"
 
 current_gate: >
-  Builder execution reconciliation and dedicated GitHub authentication are closed.
-  Work Runner v0.1 remains the next separately requested implementation milestone.
-  No task execution identity, runner or production deployment is enabled; Media
-  remains parked under Homelab/Media ownership.
+  Work Runner v0.1 local acceptance is verified under its dedicated service
+  identity. Complete Change/Review Lane CI and merge closure. Whole-host reboot
+  remains explicitly pending on the shared Homelab; do not claim it from service
+  restart. Remote submission, model integration and publication require separate
+  milestones and are not enabled.
 
 current_state: >
-  PR #12 was squash-merged as ed38c0a0ff8a2a4b0b788a5caea63116b982f762 after
-  successful CI run #48 on 434b5e658dfbd785814235763d64b96da6ccda1f.
-  All 125 Linux tests passed, including seven authentication boundary tests.
-  Both remote and local reconciliation branches and the temporary review worktree
-  were removed after merged-content verification. The live deployment checkout
-  and running services were not updated; current repository state is authoritative.
-  A dedicated builder fine-grained PAT was installed through hidden input into a
-  private mode-600 Homelab file, separate from Core and control credentials.
-  Authenticated read, push dry run and the exact prepared branch push at 8f5c19e
-  passed. The bounded helper preserves normal Git hooks and exposes no token in
-  configuration, arguments or logs. Expiry is 2026-12-09 per the owner. The helper
-  runs as the existing administrative login without sudo; no autonomous coding
-  identity or Work Runner has been created.
-  Builder execution reconciliation on 2026-10-10 verified the Homelab identities,
-  runtime boundaries, repository/workspace layout and credential metadata. The
-  installed Bubblewrap executed a harmless isolated process successfully; this
-  is feasibility evidence, not acceptance under a future service identity.
-  The proposal reuses systemd, Python, Git and Bubblewrap with a dedicated
-  non-administrative builder account and per-task sandboxes. Existing services
-  remain unchanged. Credential purpose/path/scope/expiry/owner metadata now has
-  one inventory, with unknown expiry explicitly retained.
-  The persistent v0.3 read-only Core remains healthy with unchanged source-read
-  credential, validators and manual operations. v0.4A adds a separate detached
-  control worker, transport-independent strict request/capability layer, and
-  private GitHub Issues as its first adapter. Six allowlisted read-only handlers
-  provide runtime health, fresh Core health/snapshot/report/proposals and bounded
-  redacted lifecycle logs. No generic command, shell, file path or Docker API is
-  exposed. A separate Issues read/write credential has no Contents access; live
-  metadata/Issues checks returned 200 and private Contents returned 403.
-  Both credentials are injected as file secrets. The worker has a read-only Core
-  state mount and its own private persistent audit directory. Fsynced request
-  reservations plus a shared host lock prevent repeat execution and concurrent
-  duplicates. Interrupted execution is not automatically retried. Result posting
-  retries reuse saved data. Transport health and request findings are separate
-  from process liveness. Default polling is 30 seconds with bounded backoff and
-  server rate-limit deadlines. On 2026-09-25 all 85 tests passed. Internal live
-  probes exercised all six capabilities, invalid requests, duplicate IDs, correlated
-  private comments and issue closure. Core read 12 states with 3 errors, 6 warnings
-  and 2 proposals. Audit survived worker recreation; replay after recreation did
-  not change the original execution record. An isolated invalid-token worker
-  reported auth failure/backoff while remaining alive. Independent ChatGPT connector
-  acceptance then succeeded through private Issues #28 and #29: runtime.health
-  returned runtime=available and core.health returned fresh source_status=findings
-  with 12 states, 3 errors, 6 warnings and 2 proposals. Both returned matching
-  request IDs and were closed by the Homelab worker. Watched Event Ledger v0.1
-  adds four additive SQLite tables, deterministic observation deduplication,
-  explicit rewatches and corrections, external event links, restart-safe delivery
-  states, historical boundary suppression, and a pure read-only Plex/Tautulli
-  normalizer. It adds no network writer and copies none of the completed 558
-  historical Trakt events. All 104 tests passed on Linux on 2026-10-06. Applying
-  the migration to a private copy of the current media.db left all four existing
-  tables logically unchanged and created every new table empty.
-  The first live observation acceptance inserted exactly one Rick and Morty S09E06
-  event; replay created no duplicate and no delivery. The merged Tautulli runner was
-  then live-accepted on a bounded real window: the durable cursor advanced from 38
-  to 42 only after durable handling, two additional canonical episode events were
-  inserted, replay/re-entry created no duplicates, and Plex/Trakt writes remained
-  zero. Reusable platform patterns now proven include deterministic fingerprints,
-  external-event links, durable source cursors, idempotency keys/request hashes,
-  explicit delivery states, ambiguity-safe restart handling and bounded adapters.
-  Plex, Tautulli, Trakt, Seerr, ARR, Movie Intelligence, media.db and Media policy
-  remain owned by Homelab/Media. The first real Mortgully Trakt delivery is parked
-  there as ambiguous; Personal AI Brain does not own its resolution or Media semantics.
+  The persistent personal-ai-brain-builder systemd service runs as non-login
+  pab-builder UID 999 / GID 982 with only its own group and no sudo/Docker/LXD
+  privileges. Root-owned stdlib-only runtime/profile and an offline approved
+  personal-ai-brain seed support one strict versioned deterministic fixture.
+  Each task has an independent workspace and private Bubblewrap user/PID/mount/
+  IPC/network boundary, non-root task UID, no capabilities, read-only proc and
+  Git metadata, bounded output/resources, and whole-process cleanup. Tasks cannot
+  read Core/control/builder credentials, other workspaces or production state,
+  or access the Docker socket, network or host root privileges.
+  Atomic fsynced task records, canonical payload hashes, admission/execution locks,
+  cancellation and conservative interrupted-state recovery prevent silent replay.
+  Private workspace, log, patch, test result and machine result survive failure
+  and restart. Emergency space and low-space admission protect durable failure
+  evidence; device failure remains fail-closed. All 153 Linux tests passed.
+  Live acceptance verified success, valid patch, duplicate/conflict handling,
+  deadlines, cancellation, graceful restart, supervisor SIGKILL, child cleanup,
+  fixture failure, low-space rejection and completion after SSH disconnect.
+  The service is enabled at boot; whole-host reboot was not performed.
+  Existing Core/control services and their deployment checkout were unchanged.
+  Builder GitHub authentication remains a separate administrative boundary and
+  its credential was not exposed to the service or sandbox. There is no remote
+  ChatGPT submission, LLM backend, task publication or deployment automation.
+  Media remains parked in Homelab/Media; its ambiguous Mortgully delivery and
+  all Media semantics remain outside this milestone.
 
 exact_next_action: >
-  Await the next explicit Work Runner v0.1 request. Reuse the accepted execution
-  design and credential provider boundary; implement no further autonomy in this
-  milestone. The reconciliation branch has been merged and cleaned up.
+  Complete PR/CI/merge closure for feat/work-runner-v01, then stop. Use the verified
+  local runner and docs/work-runner-v01.md as the foundation for a separately
+  approved next milestone; do not add remote submission, models or publication.
 
 blockers: []
 
@@ -93,7 +55,8 @@ dependencies:
     dependency: "Hosts Core and control containers, separate credentials and durable private audit."
 
 important_open_loops:
-  - "Validate sandbox isolation under the future service identity; current administrator-login probe is not acceptance."
+  - "Whole-host reboot acceptance for Work Runner remains pending; service enablement/restart and SSH independence are verified."
+  - "Runner retention is manual with a 256-record admission cap; preserve deduplication truth and unmerged task artifacts."
   - "Rotate/revoke the builder credential before 2026-12-09; existing Core/control expiry remains owner-managed."
   - "Media scheduling, Trakt delivery, ratings, deletes and Plex write-back are Homelab/Media-owned follow-ups; the Mortgully delivery remains ambiguity-gated."
   - "The completed 558/558 Trakt migration remains outside the ongoing Plex cursor and must not be replayed."
@@ -108,17 +71,22 @@ important_open_loops:
 portfolio:
   milestone: true
   signal: >
-    Builder execution is reconciled. Dedicated bounded GitHub authentication is
-    installed and branch push verified; Work Runner execution remains unimplemented.
-    The persistent read-only Core and reusable Homelab control bridge remain accepted.
-    Watched Event Ledger v0.1 and the restart-safe Tautulli reconciliation runner are
-    merged and live-accepted as Media-specific implementations of reusable cursor,
-    idempotency, audit and delivery-state patterns. Media is safely parked in its own
-    workstream with one ambiguous delivery blocker; unrelated platform work can proceed.
+    A durable local Work Runner is live-accepted under a constrained Homelab
+    service identity. Deterministic tasks produce private review artifacts and
+    survive session loss without gaining credentials, network, publication or
+    deployment powers. Remote/model integrations remain separately gated and
+    Media stays parked.
 
 verification:
   last_verified: "2026-10-10"
   sources:
+    - "153 Linux tests passed: 125 existing plus 28 Work Runner tests, including ENOSPC, failed terminal commit and service-stop/child-exit race."
+    - "Live acceptance 2026-10-10: task 72cc4388-68eb-4963-91f3-68719ead9653 succeeded with valid patch and all 17 isolation checks."
+    - "Task d80668f9-6bc4-4385-954f-d88d79945878 succeeded after originating SSH ended; final result observed through a fresh session."
+    - "Graceful restart c9170aa8-79f4-41ac-afd8-f7261e195cc9 and SIGKILL 51de2fb3-4992-4387-b158-b7c76f55826c preserved interrupted truth without replay; cgroup child cleanup passed."
+    - "Deadline, cancellation, duplicate/conflict, fixture failure retention and live low-space guard passed. Real host disk was not filled; actual ENOSPC was injected in offline tests."
+    - "pab-builder UID 999/GID 982, only group 982; service enabled at boot. Whole-host reboot explicitly not tested."
+    - "docs/work-runner-v01.md"
     - "PR https://github.com/Az1mutt/personal-ai-brain/pull/12 merged as ed38c0a0ff8a2a4b0b788a5caea63116b982f762."
     - "CI https://github.com/Az1mutt/personal-ai-brain/actions/runs/38077933098 (run #48) passed for reviewed head 434b5e658dfbd785814235763d64b96da6ccda1f."
     - "125 Linux tests passed; whitespace checks and tracked-file secret-absence check passed."
