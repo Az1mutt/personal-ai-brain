@@ -250,3 +250,13 @@ private credential file; revalidate scope and update the inventory expiry.
 Validation: seven offline boundary tests cover exact prompt allowlisting, file
 permissions/symlinks, fixed ref and hook preservation, URL rewrite rejection,
 unsupported operations and API redirect denial. No Work Runner was started.
+
+
+## Implemented follow-up: Work Runner v0.1
+
+The local execution milestone is now implemented and live-accepted under the
+dedicated pab-builder service identity. See [Work Runner v0.1](work-runner-v01.md)
+for its strict contract, actual isolation boundary, durable state and acceptance
+evidence. This supersedes the earlier unimplemented-runner status in this
+historical reconciliation. Remote intake, models and task publication remain
+unimplemented; whole-host reboot acceptance is explicitly pending.

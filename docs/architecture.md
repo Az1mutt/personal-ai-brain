@@ -146,3 +146,10 @@ General scheduling, notification and infrastructure-write capabilities remain de
 Homelab environment and proposes the next Work Runner gate. It does not enable
 execution permissions. [Credential inventory](credential-inventory.md) is the
 single platform credential metadata authority; values are never recorded there.
+
+## Work Runner v0.1
+
+[Local Work Runner](work-runner-v01.md) implements the accepted builder execution
+boundary with one fixed deterministic task, a constrained systemd identity,
+per-task Bubblewrap isolation and fsynced task truth/artifacts. It has no model,
+remote task intake, GitHub publication or deployment capability.
