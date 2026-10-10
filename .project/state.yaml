@@ -6,14 +6,14 @@ project:
   owner: "Project OS & Agent Architecture chat"
 
 status: "active"
-phase: "work-runner-v01-local-acceptance-verified"
+phase: "work-runner-v01-complete"
 
 current_gate: >
-  Work Runner v0.1 local acceptance is verified under its dedicated service
-  identity. Complete Change/Review Lane CI and merge closure. Whole-host reboot
-  remains explicitly pending on the shared Homelab; do not claim it from service
-  restart. Remote submission, model integration and publication require separate
-  milestones and are not enabled.
+  Work Runner v0.1 is complete: local acceptance verified, PR #13 merged after
+  successful CI, and review branches/worktree cleaned. Whole-host reboot remains
+  explicitly pending on the shared Homelab; service restart is not a reboot test.
+  Remote submission, model integration and publication require separately
+  approved milestones and are not enabled.
 
 current_state: >
   The persistent personal-ai-brain-builder systemd service runs as non-login
@@ -42,9 +42,9 @@ current_state: >
   all Media semantics remain outside this milestone.
 
 exact_next_action: >
-  Complete PR/CI/merge closure for feat/work-runner-v01, then stop. Use the verified
-  local runner and docs/work-runner-v01.md as the foundation for a separately
-  approved next milestone; do not add remote submission, models or publication.
+  Stop at the completed Work Runner v0.1 boundary. Use the verified local runner
+  and docs/work-runner-v01.md for a separately approved next milestone.
+  Schedule whole-host reboot acceptance only in a suitable maintenance window.
 
 blockers: []
 
@@ -80,6 +80,9 @@ portfolio:
 verification:
   last_verified: "2026-10-10"
   sources:
+    - "PR https://github.com/Az1mutt/personal-ai-brain/pull/13 merged as bc164704b953fd57e274bdc797705bed314e368c; merged tree matches reviewed head c16a3ca026e13e74a8f1d9a0213ae0a6c9205af9."
+    - "CI https://github.com/Az1mutt/personal-ai-brain/actions/runs/38079875948 passed for the reviewed Work Runner head."
+    - "Work Runner remote/local review branch and temporary worktree removed; builder service remains active/enabled; existing deployment checkout remains clean and unchanged."
     - "153 Linux tests passed: 125 existing plus 28 Work Runner tests, including ENOSPC, failed terminal commit and service-stop/child-exit race."
     - "Live acceptance 2026-10-10: task 72cc4388-68eb-4963-91f3-68719ead9653 succeeded with valid patch and all 17 isolation checks."
     - "Task d80668f9-6bc4-4385-954f-d88d79945878 succeeded after originating SSH ended; final result observed through a fresh session."
