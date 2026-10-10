@@ -15,7 +15,7 @@ the corresponding new capability is enabled. File permission evidence is in
 | Parked Media client reference | `/home/az1mutt/.config/personal-ai-brain/trakt-client.json` | Media-owned; contents/scopes not inspected | Not inspected | Igor / Homelab-Media |
 | Parked Media device-flow reference | `/home/az1mutt/.config/personal-ai-brain/trakt-device.json` | Media-owned historical device-flow artifact; validity not assumed | Not inspected | Igor / Homelab-Media |
 | Parked Media token reference | `/home/az1mutt/.config/personal-ai-brain/trakt-token.json` | Media-owned; contents/scopes not inspected | Not inspected | Igor / Homelab-Media |
-| Future builder GitHub publication — absent/disabled | Proposed `/etc/personal-ai-brain/builder/credentials/github-publisher` | Platform repo only; Contents + Pull requests; trusted publisher only; no Core/Issues token reuse | Set short expiry and rotation owner before enabling | Igor; publisher custodian to be assigned |
+| Builder GitHub publication — `personal-ai-brain-builder` | `/home/az1mutt/.config/personal-ai-brain/builder/github-token` | Only `Az1mutt/personal-ai-brain`; Contents read/write, Pull requests read/write, automatic Metadata read; selected UI scope per owner setup, branch push verified | 2026-12-09 (owner supplied) | Igor / Az1mutt |
 | Future headless model access — absent/not selected | Proposed `/etc/personal-ai-brain/builder/credentials/model-provider` | Selected provider/project and bounded usage only; distinct from GitHub | Provider-specific; record before enabling | Igor; provider custodian to be assigned |
 
 Inventory scope is observed platform execution references, not a host-wide secret

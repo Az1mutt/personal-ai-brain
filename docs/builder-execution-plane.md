@@ -199,3 +199,54 @@ It does not yet remove the relay for every coding request: remote task intake,
 model execution and PR publication are explicit subsequent steps. No host cleanup,
 new credential or permission expansion was necessary for this reconciliation.
 
+
+
+## Implemented follow-up: Builder GitHub Authentication
+
+This section supersedes the snapshot's absent builder credential only. The Work
+Runner, dedicated execution account and task sandboxes remain unimplemented.
+Igor authorized a separate fine-grained PAT for publication; it is not the Core
+read or control-Issues credential. The single credential inventory records its
+path, selected scope, owner and 2026-12-09 expiry, never its value.
+
+Hidden Windows form input was sent through SSH stdin directly into an exclusive,
+mode-600 file in a mode-700 Homelab directory. No token was saved on Windows,
+placed in Git config/URLs, command arguments, repository files or images.
+Bootstrap uses the existing az1mutt login without sudo. This purpose-specific
+credential authenticates as Az1mutt; it is not a separate GitHub bot or the future
+constrained coding identity, and must never be exposed to task code.
+
+Reviewed source is in `scripts/builder_auth/`. Installed helpers are under
+`/home/az1mutt/.local/lib/personal-ai-brain/builder-auth/` (private directory,
+mode-700 helpers). `builder_publish.py verify` performs only an authenticated GET
+of the exact repository. `builder_publish.py push` additionally checks that the
+local reconciliation branch descends from 8f5c19e, performs a dry run, and pushes
+only `docs/builder-execution-reconciliation`, without force. Normal Git hooks are
+preserved. It accepts no repository, ref, shell command or token argument.
+
+GIT_ASKPASS handles only the exact HTTPS credential context. It validates secret
+ownership/modes and rejects file symlinks. The publisher uses a clean process
+environment without tracing/token variables, disables credential persistence for
+that invocation, rejects URL rewrites/extra headers/proxies, and refuses redirects.
+Captured Git/API diagnostics are reduced to fixed result codes. No global Git
+credential helper/config change was made. This administrative bootstrap helper
+is not a security boundary against another process running as az1mutt.
+
+Authenticated metadata read and dry run passed; the first actual push published
+the pre-existing 8f5c19e commit. The successful actual push is the bounded write
+proof; a public-repository GET alone cannot prove write permission. The same branch
+then receives the reviewed auth source, tests and metadata. No test branch or
+production deployment is used. PR/CI/merge closure uses the existing GitHub connector.
+
+Contents read/write is sufficient for this non-workflow branch push. PR create/
+update additionally needs Pull requests read/write; this is the same publication
+purpose, so one PAT serves both. No Issues, Actions, Workflows or Administration
+permissions were requested. A PAT is repository-scoped, not branch-scoped; the
+fixed helper bounds this operation but does not claim to reduce the PAT's grant.
+The credential provider can later return a GitHub App installation token while
+keeping the publication/task contract unchanged. Rotation replaces only the
+private credential file; revalidate scope and update the inventory expiry.
+
+Validation: seven offline boundary tests cover exact prompt allowlisting, file
+permissions/symlinks, fixed ref and hook preservation, URL rewrite rejection,
+unsupported operations and API redirect denial. No Work Runner was started.
