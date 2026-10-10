@@ -6,15 +6,30 @@ project:
   owner: "Project OS & Agent Architecture chat"
 
 status: "active"
-phase: "platform-ready-media-domain-parked"
+phase: "builder-github-auth-verified-closure-pending"
 
 current_gate: >
-  Resume the general Personal AI Brain platform roadmap. The Media domain is safely
-  parked in the Homelab/Media workstream: its first ongoing Trakt delivery remains
-  ambiguous and requires saved-audit reconciliation before any retry. That Media
-  blocker does not block unrelated platform work.
+  Complete the documentation/authentication PR, CI and merge closure. Builder
+  authentication is installed and the existing reconciliation branch was pushed
+  successfully. Work Runner implementation remains a separate next milestone;
+  no execution identity, task runner or production deployment is enabled.
 
 current_state: >
+  A dedicated builder fine-grained PAT was installed through hidden input into a
+  private mode-600 Homelab file, separate from Core and control credentials.
+  Authenticated read, push dry run and the exact prepared branch push at 8f5c19e
+  passed. The bounded helper preserves normal Git hooks and exposes no token in
+  configuration, arguments or logs. Expiry is 2026-12-09 per the owner. The helper
+  runs as the existing administrative login without sudo; no autonomous coding
+  identity or Work Runner has been created.
+  Builder execution reconciliation on 2026-10-10 verified the Homelab identities,
+  runtime boundaries, repository/workspace layout and credential metadata. The
+  installed Bubblewrap executed a harmless isolated process successfully; this
+  is feasibility evidence, not acceptance under a future service identity.
+  The proposal reuses systemd, Python, Git and Bubblewrap with a dedicated
+  non-administrative builder account and per-task sandboxes. Existing services
+  remain unchanged. Credential purpose/path/scope/expiry/owner metadata now has
+  one inventory, with unknown expiry explicitly retained.
   The persistent v0.3 read-only Core remains healthy with unchanged source-read
   credential, validators and manual operations. v0.4A adds a separate detached
   control worker, transport-independent strict request/capability layer, and
@@ -59,9 +74,9 @@ current_state: >
   there as ambiguous; Personal AI Brain does not own its resolution or Media semantics.
 
 exact_next_action: >
-  Continue the next approved general Personal AI Brain platform milestone. Reuse the
-  verified cursor, idempotency, audit and delivery-state patterns where appropriate;
-  leave Mortgully reconciliation and all Media policy changes to Homelab/Media.
+  Finish PR/CI/merge for docs/builder-execution-reconciliation and synchronize this
+  state with the verified merge. Stop after closure; start Work Runner v0.1 only
+  as a separately requested milestone. Media remains parked.
 
 blockers: []
 
@@ -72,6 +87,8 @@ dependencies:
     dependency: "Hosts Core and control containers, separate credentials and durable private audit."
 
 important_open_loops:
+  - "Validate sandbox isolation under the future service identity; current administrator-login probe is not acceptance."
+  - "Rotate/revoke the builder credential before 2026-12-09; existing Core/control expiry remains owner-managed."
   - "Media scheduling, Trakt delivery, ratings, deletes and Plex write-back are Homelab/Media-owned follow-ups; the Mortgully delivery remains ambiguity-gated."
   - "The completed 558/558 Trakt migration remains outside the ongoing Plex cursor and must not be replayed."
   - "Define v0.4B Media capability contracts and risk boundaries before enabling any media write action."
@@ -85,6 +102,8 @@ important_open_loops:
 portfolio:
   milestone: true
   signal: >
+    Builder execution is reconciled. Dedicated bounded GitHub authentication is
+    installed and branch push verified; Work Runner execution remains unimplemented.
     The persistent read-only Core and reusable Homelab control bridge remain accepted.
     Watched Event Ledger v0.1 and the restart-safe Tautulli reconciliation runner are
     merged and live-accepted as Media-specific implementations of reusable cursor,
@@ -92,8 +111,18 @@ portfolio:
     workstream with one ambiguous delivery blocker; unrelated platform work can proceed.
 
 verification:
-  last_verified: "2026-10-07"
+  last_verified: "2026-10-10"
   sources:
+    - "Builder credential installed using masked input and SSH stdin; mode 600, parent 700, separate path and owner-supplied expiry 2026-12-09."
+    - "Authenticated repository read, push dry run and exact branch push of 8f5c19e succeeded with Git hooks preserved."
+    - "scripts/builder_auth/builder_askpass.py"
+    - "scripts/builder_auth/builder_publish.py"
+    - "tests/test_builder_auth.py"
+    - "2026-10-10: fresh origin/main 828f9ce policy/state; bounded host user, Git, checkout, runtime, mount and credential-permission inspection."
+    - "Existing Core/control healthy and detached; Docker enabled at boot; no service changes or reboot test in this milestone."
+    - "Bubblewrap 0.11.1 private user/PID/network harmless-process probe exited 0; direct unshare denied by host policy."
+    - "docs/builder-execution-plane.md"
+    - "docs/credential-inventory.md"
     - "Live bounded Tautulli runner acceptance: cursor 38 -> 42, two canonical events inserted, replay/re-entry duplicates 0, Plex/Trakt writes 0."
     - "Media closure reconciliation retained Mortgully as ambiguous with no closure POST; ownership remains Homelab/Media."
     - "118 Linux tests passed: 104 existing plus 14 Tautulli reconciliation tests."
@@ -117,5 +146,5 @@ verification:
     - "docs/handoffs/CODEX_TO_CHATGPT.md"
 
 sync:
-  status: "synced"
+  status: "pending-review"
   storage: ".project/state.yaml"
