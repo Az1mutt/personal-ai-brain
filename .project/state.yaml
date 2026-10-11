@@ -6,14 +6,15 @@ project:
   owner: "Project OS & Agent Architecture chat"
 
 status: "active"
-phase: "remote-work-submission-v01-internally-accepted"
+phase: "remote-work-submission-v01-externally-accepted"
 
 current_gate: >
-  Remote Work Submission v0.1 is internally accepted, merged and deployed.
-  External ChatGPT connector acceptance remains pending: the project chat must
-  independently submit a fresh work task and read its correlated terminal status.
-  Whole-host reboot remains pending and outside this milestone. No model backend,
-  task GitHub publication or broader execution capability is authorized.
+  Remote Work Submission v0.1 is externally accepted end-to-end from this project
+  ChatGPT chat through the private GitHub Issues transport to the Homelab Work
+  Runner and back to correlated terminal status. Whole-host reboot remains pending
+  and outside this milestone. No model backend, task GitHub publication or broader
+  execution capability is authorized; a new implementation milestone requires
+  separate approval.
 
 current_state: >
   The existing private GitHub Issues transport now exposes strictly typed
@@ -37,15 +38,21 @@ current_state: >
   source; builder is active and control transport healthy. The existing durable
   deployment checkout was fast-forwarded; only builder/control were updated.
   Core and Media services were not redeployed. Review branches/worktree were
-  removed. No external ChatGPT-originated acceptance has been performed for this
-  milestone. No model, task publisher, listener, remote shell/filesystem API or
-  deployment capability was added. Media remains parked and out of scope.
+  removed. External ChatGPT-originated acceptance was independently completed on
+  2026-10-11 through private Issues #40 and #41. Issue #40 submitted task
+  d297f109-8a4c-4020-9572-9d84243a46a8 with correlated request
+  7ce4ff95-eceb-46d4-81b2-cd4c64324640 and closed after durable admission.
+  Issue #41 queried the same task with correlated request
+  4160f427-1438-4897-9b57-cdda82a0cfc7 and closed with terminal succeeded,
+  attempts=1 and artifacts_retained=true. No model, task publisher, listener,
+  remote shell/filesystem API or deployment capability was added. Media remains
+  parked and out of scope.
 
 exact_next_action: >
-  In the project ChatGPT chat, use its own GitHub connector with the fresh
-  work.submit and work.status payloads in docs/handoffs/CODEX_TO_CHATGPT.md.
-  Verify correlated comments, succeeded terminal task result and issue closure;
-  record the external evidence before marking that gate complete. Stop implementation.
+  Stop at the externally accepted Remote Work Submission v0.1 boundary and await
+  a separately approved next implementation milestone. Keep whole-host reboot
+  acceptance for a suitable maintenance window; do not add model integration,
+  autonomous GitHub publication or broader execution powers implicitly.
 
 blockers: []
 
@@ -56,7 +63,6 @@ dependencies:
     dependency: "Hosts Core and control containers, separate credentials and durable private audit."
 
 important_open_loops:
-  - "External ChatGPT connector acceptance of remote work remains pending; internal Codex Issues probes are not a substitute."
   - "Retain bounded transport inbox/outbox records (2048-entry cap) and execution deduplication truth; no automatic pruning."
   - "Whole-host reboot acceptance for Work Runner remains pending; service enablement/restart and SSH independence are verified."
   - "Runner retention is manual with a 256-record admission cap; preserve deduplication truth and unmerged task artifacts."
@@ -75,13 +81,15 @@ portfolio:
   milestone: true
   signal: >
     Authorized private Issues callers can submit the fixed local fixture, query
-    durable task truth and cancel without SSH. Internal deployment acceptance is
-    complete; independent ChatGPT connector acceptance is pending. Execution
-    remains offline, credential-free and bounded; Media remains parked.
+    durable task truth and cancel without SSH. Independent ChatGPT connector
+    acceptance is complete through correlated submit/status Issues #40 and #41.
+    Execution remains offline, credential-free and bounded; Media remains parked.
 
 verification:
   last_verified: "2026-10-11"
   sources:
+    - "External ChatGPT acceptance Issue https://github.com/Az1mutt/personal-project-brain/issues/40: request 7ce4ff95-eceb-46d4-81b2-cd4c64324640 submitted task d297f109-8a4c-4020-9572-9d84243a46a8; capability_completed/outcome=completed; issue closed."
+    - "External ChatGPT acceptance Issue https://github.com/Az1mutt/personal-project-brain/issues/41: request 4160f427-1438-4897-9b57-cdda82a0cfc7 returned the same task terminal succeeded, attempts=1, artifacts_retained=true; capability_completed/outcome=completed; issue closed."
     - "PR https://github.com/Az1mutt/personal-ai-brain/pull/14 merged as a5a8cef68126b7650e38d5361390791e8723cd5b; CI https://github.com/Az1mutt/personal-ai-brain/actions/runs/38097670258 passed for 023ca530f4920d1ba9e360dac9498bfd829b69dc."
     - "174 tests passed: 153 existing plus 21 handoff integration cases; original six read-only control capabilities retain regression coverage."
     - "Internal private Issues #32-39: submit, duplicate without second attempt, payload conflict, invalid type rejection, running cancellation and terminal succeeded/cancelled status; correlated worker comments and closure verified."
