@@ -17,7 +17,8 @@ CHECKS = {'core_credential_denied', 'control_credential_denied', 'builder_creden
           'other_workspace_denied', 'production_state_denied', 'supervisor_state_denied',
           'host_shadow_denied', 'docker_socket_denied', 'docker_socket_absent',
           'non_root', 'only_primary_group', 'no_capabilities', 'no_new_privileges',
-          'setuid_root_denied', 'network_denied', 'git_metadata_readonly', 'fixture_content_matches'}
+          'setuid_root_denied', 'network_denied', 'git_metadata_readonly', 'fixture_content_matches',
+          'transport_absent'}
 
 def limits():
     resource.setrlimit(resource.RLIMIT_CORE, (0, 0))

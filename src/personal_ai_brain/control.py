@@ -112,7 +112,10 @@ class Registry:
     def register(self, capability):
         if capability.id in self.capabilities:
             raise Rejected("duplicate_capability")
-        if capability.risk_level != "read_only" or capability.side_effect_class != "none":
+        bounded_work = (capability.id in {'work.submit', 'work.cancel'}
+                        and capability.risk_level == 'bounded_work'
+                        and capability.side_effect_class == 'local_work_handoff')
+        if not bounded_work and (capability.risk_level != "read_only" or capability.side_effect_class != "none"):
             raise Rejected("capability_policy_denied")
         self.capabilities[capability.id] = capability
 
@@ -123,7 +126,7 @@ class Registry:
         return capability, capability.validate(arguments)
 
 
-def build_registry(core_state: Path, reader_factory, redactor):
+def build_registry(core_state: Path, reader_factory, redactor, work_client=None):
     def runtime_health(_):
         health, code = runtime.health(core_state, core_state / "heartbeat.json")
         last = health.get("last_run", {})
@@ -168,4 +171,21 @@ def build_registry(core_state: Path, reader_factory, redactor):
     caps.append(Capability("runtime.logs_tail", "Bounded redacted Core lifecycle log", "read_only",
                            {"type": "object", "additionalProperties": False, "properties": {"lines": {"type": "integer", "minimum": 1, "maximum": 100}}},
                            log_arguments, logs_tail))
+    if work_client is not None:
+        from .work_handoff import arguments as work_arguments
+        from .work_contract import Rejected as WorkRejected
+        for operation in ('work.submit', 'work.status', 'work.cancel'):
+            def validate(value, operation=operation):
+                try:
+                    return work_arguments(operation, value)
+                except (WorkRejected, ValueError, TypeError, RecursionError):
+                    raise Rejected('invalid_work_arguments') from None
+            def handle(value, request_id, operation=operation):
+                return work_client.invoke(operation, value, request_id)
+            field = 'contract' if operation == 'work.submit' else 'task_id'
+            caps.append(Capability(operation, 'Bounded local Work Runner operation',
+                'read_only' if operation == 'work.status' else 'bounded_work',
+                {'type': 'object', 'additionalProperties': False, 'required': [field],
+                 'properties': {field: {'type': 'object' if field == 'contract' else 'string'}}},
+                validate, handle, 'none' if operation == 'work.status' else 'local_work_handoff'))
     return Registry(caps)

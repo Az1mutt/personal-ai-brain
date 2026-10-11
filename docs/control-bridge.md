@@ -162,3 +162,13 @@ only after that external caller test is recorded; see the rolling handoff.
 
 No Telegram, n8n, MCP, LLM, media/recipe handlers, source-state writes, service
 restart capability or arbitrary execution API is implemented in this milestone.
+
+## Remote Work Submission v0.1 extension
+
+The accepted bounded write exception adds `work.submit` and `work.cancel`, plus
+`work.status`, while preserving the six original read capabilities. The existing
+private Issues credential and caller boundary are reused. See
+[Remote Work Submission](remote-work-submission-v01.md) for exact arguments,
+durable handoff semantics, ownership/mount boundaries and the separate external
+ChatGPT acceptance gate. The earlier read-only registry restriction describes
+v0.4A; only these named local-work effects are now additionally permitted.

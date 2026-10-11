@@ -30,6 +30,8 @@ def run():
         'docker_socket_denied': '/run/docker.sock',
     }
     checks.update({name: denied_read(path) for name, path in paths.items()})
+    checks['transport_absent'] = (not Path('/var/lib/personal-ai-brain/work-transport').exists()
+                                  and not Path('/work-transport').exists())
     checks['docker_socket_absent'] = not Path('/run/docker.sock').exists() and not Path('/var/run/docker.sock').exists()
     checks['non_root'] = os.getuid() != 0 and os.geteuid() != 0
     checks['only_primary_group'] = all(group == os.getgid() for group in os.getgroups())
