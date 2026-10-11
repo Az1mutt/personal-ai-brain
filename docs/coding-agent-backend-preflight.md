@@ -2,7 +2,8 @@
 
 Verified 2026-10-11 against origin/main
 `cde8c424b687c3ef99b98e4764da4a67c973d8b2` and current official documentation.
-**Status: stopped before installation/authentication, pending architecture review.**
+**Historical preflight, superseded by the owner-approved trusted Responses API broker decision on 2026-10-11.**
+See [implementation and current gate](coding-agent-backend-v01.md) and [checkpoint](CODING_BROKER_CHECKPOINT.md). The CLI alternatives and continuation steps below are historical, not current instructions.
 This is not an implemented or accepted coding backend. Remote Work Submission
 remains externally accepted. No production runtime, task contract, seed,
 credential or service was changed; Project State retains verified reality.

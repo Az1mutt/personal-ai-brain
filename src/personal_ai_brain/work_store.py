@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 import uuid
 
-from .work_contract import Rejected, digest, fresh, task_id, timestamp
+from .work_contract import Rejected, digest, fresh, task_id, timestamp, allowed_base as select_base
 
 TERMINAL = {'succeeded', 'failed', 'blocked', 'cancelled', 'interrupted'}
 EDGES = {'submitted': {'reserved', 'blocked', 'cancelled', 'failed'},
@@ -73,7 +73,7 @@ class Store:
                     raise Rejected('task_id_payload_conflict')
                 return existing, False
             fresh(request)
-            if request['base_ref'] != allowed_base:
+            if request['base_ref'] != select_base(request, allowed_base):
                 raise Rejected('base_not_allowlisted')
             if len(list(self.tasks.glob('*.json'))) >= 256:
                 raise Rejected('retention_capacity_reached')
@@ -96,6 +96,9 @@ class Store:
                       'history': [{'status': 'submitted', 'at': timestamp(), 'code': 'accepted'}]}
             atomic_bytes(artifacts / 'execution.log', b'submitted\n')
             atomic_bytes(artifacts / 'patch.diff', b'')
+            if request['task_type'] == 'coding.patch-test.v1':
+                atomic_json(artifacts / 'agent-result.json', {'schema_version': '0.1', 'status': 'not_started', 'usage': None})
+                atomic_bytes(artifacts / 'agent.log', b'not_started\n')
             atomic_json(artifacts / 'test-result.json', {'status': 'not_run'})
             atomic_json(artifacts / 'result.json', record)
             atomic_json(self.path(identifier), record)

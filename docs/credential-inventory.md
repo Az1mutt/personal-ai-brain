@@ -16,7 +16,7 @@ the corresponding new capability is enabled. File permission evidence is in
 | Parked Media device-flow reference | `/home/az1mutt/.config/personal-ai-brain/trakt-device.json` | Media-owned historical device-flow artifact; validity not assumed | Not inspected | Igor / Homelab-Media |
 | Parked Media token reference | `/home/az1mutt/.config/personal-ai-brain/trakt-token.json` | Media-owned; contents/scopes not inspected | Not inspected | Igor / Homelab-Media |
 | Builder GitHub publication — `personal-ai-brain-builder` | `/home/az1mutt/.config/personal-ai-brain/builder/github-token` | Only `Az1mutt/personal-ai-brain`; Contents read/write, Pull requests read/write, automatic Metadata read; selected UI scope per owner setup, branch push verified | 2026-12-09 (owner supplied) | Igor / Az1mutt |
-| Future headless model access — absent/not selected | Proposed `/etc/personal-ai-brain/builder/credentials/model-provider` | Selected provider/project and bounded usage only; distinct from GitHub | Provider-specific; record before enabling | Igor; provider custodian to be assigned |
+| Responses inference — owner setup pending, credential absent | `/etc/personal-ai-brain/inference/credentials/openai-api-key` (planned) | Dedicated Personal AI Brain OpenAI project; Responses inference with gpt-6.1-sol only, USD 15 enforced monthly project cap; no other platform credentials | Owner must record rotation/revocation date before enabling; no expiry assumed | Igor / proposed pab-inference service account |
 
 Inventory scope is observed platform execution references, not a host-wide secret
 discovery exercise. Media internals and unrelated trading credentials are excluded.

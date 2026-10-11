@@ -27,7 +27,7 @@ def arguments(operation, value, base=BASE):
         if set(value) != {'contract'}:
             raise contract.Rejected('invalid_work_arguments')
         task = contract.parse(encode(value['contract']))
-        if task['base_ref'] != base:
+        if task['base_ref'] != contract.allowed_base(task, base):
             raise contract.Rejected('base_not_allowlisted')
         return {'contract': task}
     if set(value) != {'task_id'}:

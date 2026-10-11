@@ -4,6 +4,7 @@ import hashlib
 import json
 import re
 import uuid
+from . import coding_policy
 
 REPOSITORY = 'Az1mutt/personal-ai-brain'
 TASK_TYPE = 'fixture.patch-test.v1'
@@ -43,13 +44,30 @@ def parse(raw):
         if not isinstance(value, dict) or set(value) != FIELDS:
             raise Rejected('invalid_fields')
         task_id(value['task_id'])
-        if (value['schema_version'] != '0.1' or value['task_type'] != TASK_TYPE
-                or value['repository'] != REPOSITORY or value['goal'] != GOAL
-                or value['acceptance_criteria'] != CRITERIA):
+        coding = value['task_type'] == coding_policy.TYPE
+        if (value['schema_version'] != '0.1' or value['task_type'] not in (TASK_TYPE, coding_policy.TYPE)
+                or value['repository'] != REPOSITORY):
+            raise Rejected('unsupported_contract')
+        if coding:
+            texts = value['acceptance_criteria']
+            if (not isinstance(texts, list) or not 1 <= len(texts) <= 5 or
+                    any(not isinstance(t, str) or not 1 <= len(t) <= 300 for t in texts) or
+                    not isinstance(value['goal'], str) or not 1 <= len(value['goal']) <= 2000):
+                raise Rejected('invalid_coding_text')
+            if any(re.search(r'://|(?:^|\s)(?:/|[A-Za-z]:\\)|[\x00-\x08\x0b-\x1f]', t)
+                   for t in [value['goal'], *texts]):
+                raise Rejected('invalid_coding_text')
+            if value['base_ref'] != coding_policy.BASE:
+                raise Rejected('base_not_allowlisted')
+            # v0.1 has one reviewed acceptance profile; never claim arbitrary
+            # caller goals passed merely because this profile's tests passed.
+            if value['goal'] != coding_policy.GOAL or texts != coding_policy.CRITERIA:
+                raise Rejected('unsupported_coding_profile')
+        elif value['goal'] != GOAL or value['acceptance_criteria'] != CRITERIA:
             raise Rejected('unsupported_contract')
         if not isinstance(value['base_ref'], str) or not re.fullmatch('[0-9a-f]{40}', value['base_ref']):
             raise Rejected('immutable_base_required')
-        if type(value['deadline_seconds']) is not int or not 1 <= value['deadline_seconds'] <= 60:
+        if type(value['deadline_seconds']) is not int or not 1 <= value['deadline_seconds'] <= (180 if coding else 60):
             raise Rejected('invalid_deadline')
         requested = datetime.fromisoformat(value['requested_at'].replace('Z', '+00:00'))
         if requested.tzinfo is None:
@@ -59,6 +77,9 @@ def parse(raw):
             raise
         raise Rejected('invalid_json_or_timestamp') from None
     return value
+
+def allowed_base(request, fixture_base):
+    return coding_policy.BASE if request['task_type'] == coding_policy.TYPE else fixture_base
 
 def fresh(request):
     requested = datetime.fromisoformat(request['requested_at'].replace('Z', '+00:00'))
