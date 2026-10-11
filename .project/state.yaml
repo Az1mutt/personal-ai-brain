@@ -6,45 +6,46 @@ project:
   owner: "Project OS & Agent Architecture chat"
 
 status: "active"
-phase: "work-runner-v01-complete"
+phase: "remote-work-submission-v01-internally-accepted"
 
 current_gate: >
-  Work Runner v0.1 is complete: local acceptance verified, PR #13 merged after
-  successful CI, and review branches/worktree cleaned. Whole-host reboot remains
-  explicitly pending on the shared Homelab; service restart is not a reboot test.
-  Remote submission, model integration and publication require separately
-  approved milestones and are not enabled.
+  Remote Work Submission v0.1 is internally accepted, merged and deployed.
+  External ChatGPT connector acceptance remains pending: the project chat must
+  independently submit a fresh work task and read its correlated terminal status.
+  Whole-host reboot remains pending and outside this milestone. No model backend,
+  task GitHub publication or broader execution capability is authorized.
 
 current_state: >
-  The persistent personal-ai-brain-builder systemd service runs as non-login
-  pab-builder UID 999 / GID 982 with only its own group and no sudo/Docker/LXD
-  privileges. Root-owned stdlib-only runtime/profile and an offline approved
-  personal-ai-brain seed support one strict versioned deterministic fixture.
-  Each task has an independent workspace and private Bubblewrap user/PID/mount/
-  IPC/network boundary, non-root task UID, no capabilities, read-only proc and
-  Git metadata, bounded output/resources, and whole-process cleanup. Tasks cannot
-  read Core/control/builder credentials, other workspaces or production state,
-  or access the Docker socket, network or host root privileges.
-  Atomic fsynced task records, canonical payload hashes, admission/execution locks,
-  cancellation and conservative interrupted-state recovery prevent silent replay.
-  Private workspace, log, patch, test result and machine result survive failure
-  and restart. Emergency space and low-space admission protect durable failure
-  evidence; device failure remains fail-closed. All 153 Linux tests passed.
-  Live acceptance verified success, valid patch, duplicate/conflict handling,
-  deadlines, cancellation, graceful restart, supervisor SIGKILL, child cleanup,
-  fixture failure, low-space rejection and completion after SSH disconnect.
-  The service is enabled at boot; whole-host reboot was not performed.
-  Existing Core/control services and their deployment checkout were unchanged.
-  Builder GitHub authentication remains a separate administrative boundary and
-  its credential was not exposed to the service or sandbox. There is no remote
-  ChatGPT submission, LLM backend, task publication or deployment automation.
-  Media remains parked in Homelab/Media; its ambiguous Mortgully delivery and
-  all Media semantics remain outside this milestone.
+  The existing private GitHub Issues transport now exposes strictly typed
+  work.submit, work.status and work.cancel alongside the unchanged six read-only
+  capabilities. The existing Issues credential is reused without new scope.
+  Control hands off only the fixed Work Runner fixture contract through a bounded
+  atomic inbox/outbox. Runner independently validates admission; task UUID/payload
+  hash remains the execution idempotency boundary and control request UUID remains
+  the invocation boundary. Submit waits at most two seconds for a response and
+  reports durable handoff pending honestly; status returns only sanitized fields.
+  The control container cannot access builder state/workspaces/publication token.
+  Builder retains UID 999/GID 982 only, no sudo, no control token/audit access.
+  One receiver child handles cancellation while the single worker executes.
+  Task sandboxes see neither transport side, credentials, network nor Docker.
+  All 174 tests passed, including original read-only control regressions.
+  Live internal Issues #32-39 verified submit, identical duplicate, payload
+  conflict rejection, unsupported task rejection, succeeded status and running
+  cancellation followed by cancelled status. Administrative checks verified actual
+  identity boundaries, all 18 sandbox checks, pending handoff through control
+  restart and builder interruption without replay. Deployed code matches merged
+  source; builder is active and control transport healthy. The existing durable
+  deployment checkout was fast-forwarded; only builder/control were updated.
+  Core and Media services were not redeployed. Review branches/worktree were
+  removed. No external ChatGPT-originated acceptance has been performed for this
+  milestone. No model, task publisher, listener, remote shell/filesystem API or
+  deployment capability was added. Media remains parked and out of scope.
 
 exact_next_action: >
-  Stop at the completed Work Runner v0.1 boundary. Use the verified local runner
-  and docs/work-runner-v01.md for a separately approved next milestone.
-  Schedule whole-host reboot acceptance only in a suitable maintenance window.
+  In the project ChatGPT chat, use its own GitHub connector with the fresh
+  work.submit and work.status payloads in docs/handoffs/CODEX_TO_CHATGPT.md.
+  Verify correlated comments, succeeded terminal task result and issue closure;
+  record the external evidence before marking that gate complete. Stop implementation.
 
 blockers: []
 
@@ -55,6 +56,8 @@ dependencies:
     dependency: "Hosts Core and control containers, separate credentials and durable private audit."
 
 important_open_loops:
+  - "External ChatGPT connector acceptance of remote work remains pending; internal Codex Issues probes are not a substitute."
+  - "Retain bounded transport inbox/outbox records (2048-entry cap) and execution deduplication truth; no automatic pruning."
   - "Whole-host reboot acceptance for Work Runner remains pending; service enablement/restart and SSH independence are verified."
   - "Runner retention is manual with a 256-record admission cap; preserve deduplication truth and unmerged task artifacts."
   - "Rotate/revoke the builder credential before 2026-12-09; existing Core/control expiry remains owner-managed."
@@ -71,15 +74,23 @@ important_open_loops:
 portfolio:
   milestone: true
   signal: >
-    A durable local Work Runner is live-accepted under a constrained Homelab
-    service identity. Deterministic tasks produce private review artifacts and
-    survive session loss without gaining credentials, network, publication or
-    deployment powers. Remote/model integrations remain separately gated and
-    Media stays parked.
+    Authorized private Issues callers can submit the fixed local fixture, query
+    durable task truth and cancel without SSH. Internal deployment acceptance is
+    complete; independent ChatGPT connector acceptance is pending. Execution
+    remains offline, credential-free and bounded; Media remains parked.
 
 verification:
-  last_verified: "2026-10-10"
+  last_verified: "2026-10-11"
   sources:
+    - "PR https://github.com/Az1mutt/personal-ai-brain/pull/14 merged as a5a8cef68126b7650e38d5361390791e8723cd5b; CI https://github.com/Az1mutt/personal-ai-brain/actions/runs/38097670258 passed for 023ca530f4920d1ba9e360dac9498bfd829b69dc."
+    - "174 tests passed: 153 existing plus 21 handoff integration cases; original six read-only control capabilities retain regression coverage."
+    - "Internal private Issues #32-39: submit, duplicate without second attempt, payload conflict, invalid type rejection, running cancellation and terminal succeeded/cancelled status; correlated worker comments and closure verified."
+    - "Succeeded task 2033635f-1b09-4214-a260-98485aa1fb50; cancelled task 45319fdd-6424-4ee9-8376-0fd4373be9e7; both attempts=1."
+    - "Live pending handoff/control restart task 87d7d515-3568-41c7-b06b-cc97091ac0b5 succeeded once with all 18 isolation checks; builder restart task 2f8724dc-99d2-48c9-afa6-abcade04fc58 remained interrupted without replay."
+    - "Actual control container and builder UID access probes passed; deployed module hashes match merged source; Compose working directory is the existing durable checkout; control healthy and builder active."
+    - "Remote/local integration branches and temporary review worktree removed after deployment verification; external ChatGPT and reboot acceptance explicitly pending."
+    - "docs/remote-work-submission-v01.md"
+    - "docs/handoffs/CODEX_TO_CHATGPT.md"
     - "PR https://github.com/Az1mutt/personal-ai-brain/pull/13 merged as bc164704b953fd57e274bdc797705bed314e368c; merged tree matches reviewed head c16a3ca026e13e74a8f1d9a0213ae0a6c9205af9."
     - "CI https://github.com/Az1mutt/personal-ai-brain/actions/runs/38079875948 passed for the reviewed Work Runner head."
     - "Work Runner remote/local review branch and temporary worktree removed; builder service remains active/enabled; existing deployment checkout remains clean and unchanged."
