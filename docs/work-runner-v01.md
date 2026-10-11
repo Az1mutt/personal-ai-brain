@@ -182,3 +182,14 @@ claim that a whole-host reboot was exercised. No production workload is rebooted
 to close this milestone. Low-space acceptance raises the private admission
 threshold; it does not fill the shared host disk. Actual ENOSPC is injected in
 offline tests and is reported separately from that live guard test.
+
+## Remote Work Submission v0.1 integration
+
+The subsequent approved milestone adds a narrow filesystem handoff from the
+existing private Issues control transport. The original local-only statements
+above describe v0.1 before this integration. See
+[Remote Work Submission](remote-work-submission-v01.md). Runner state, artifacts,
+fixture allowlist and execution idempotency remain authoritative. A bounded
+receiver child handles submit/status/cancel concurrently with the single executor;
+task sandboxes gain no transport mount, network or credential access. The fixture
+now also verifies transport absence (18 checks including the original 17).

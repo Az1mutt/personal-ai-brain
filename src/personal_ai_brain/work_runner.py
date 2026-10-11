@@ -9,6 +9,7 @@ import signal
 import subprocess
 import sys
 import time
+import multiprocessing
 
 from .work_contract import Rejected, REPOSITORY, parse, timestamp
 from .work_store import Store, TERMINAL, atomic_json, locked
@@ -124,6 +125,18 @@ class Runner:
             self.store.transition(identifier, 'failed', 'runner_error')
         return True
 
+def receive_work(root, base, stopped):
+    from .work_handoff import Server
+    for sig in (signal.SIGINT, signal.SIGTERM):
+        signal.signal(sig, lambda *_: stopped.set())
+    handoff = Server(Store(root), base)
+    try:
+        while not stopped.is_set():
+            handoff.tick()
+            stopped.wait(0.05)
+    finally:
+        handoff.close()
+
 def serve(store, policy):
     stopped = False
     def stop(*_):
@@ -134,10 +147,28 @@ def serve(store, policy):
     with locked(store.state / 'worker.lock', nonblocking=True):
         runner = Runner(store, policy, stopping=lambda: stopped)
         runner.recovery()
+        # A separate receiver keeps cancellation responsive without introducing
+        # threads around the sandbox's resource-limit preexec_fn.
+        context = multiprocessing.get_context('spawn')
+        handoff_stop = context.Event()
+        receiver = context.Process(target=receive_work,
+            args=(store.root, policy['base_ref'], handoff_stop), daemon=True)
+        receiver.start()
+        runner.stopping = lambda: stopped or not receiver.is_alive()
         print('work_runner_ready', flush=True)
-        while not stopped:
-            if not runner.tick():
-                time.sleep(0.1)
+        try:
+            while not stopped and receiver.is_alive():
+                if not runner.tick():
+                    time.sleep(0.1)
+        finally:
+            stopped = True
+            handoff_stop.set()
+            receiver.join(timeout=2)
+            if receiver.is_alive():
+                receiver.terminate()
+                receiver.join(timeout=2)
+        if receiver.exitcode != 0:
+            raise RuntimeError('handoff_unavailable')
 
 def main():
     os.umask(0o077)

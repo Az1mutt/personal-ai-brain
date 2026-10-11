@@ -28,6 +28,17 @@ services:
       - github_control_token
     volumes:
       - type: bind
+        source: /var/lib/personal-ai-brain/work-transport/inbox
+        target: /work-transport/inbox
+        bind:
+          create_host_path: false
+      - type: bind
+        source: /var/lib/personal-ai-brain/work-transport/outbox
+        target: /work-transport/outbox
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
         source: ${PAB_STATE_DIR:?Set PAB_STATE_DIR}
         target: /core-state
         read_only: true

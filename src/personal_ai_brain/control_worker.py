@@ -111,7 +111,10 @@ class Worker:
                     self.save(request_path, record)  # fsync BEFORE any handler invocation.
                     try:
                         with deadline():
-                            result = capability.handler(arguments)
+                            if capability.id in {'work.submit', 'work.status', 'work.cancel'}:
+                                result = capability.handler(arguments, request_id=correlation)
+                            else:
+                                result = capability.handler(arguments)
                         record.update(status="capability_completed", result=self.redactor.clean(result))
                     except CapabilityFailed:
                         record.update(status="capability_execution_failed", error="source_read_failure")
@@ -190,13 +193,14 @@ def serve(state=STATE, heartbeat=BEAT):
         print("credential_unavailable", flush=True)
         return 3
     redactor = Redactor((core_token, control_token))
-    registry = build_registry(Path("/core-state"), lambda: RunReader(core_token), redactor)
+    from .work_handoff import Client
+    registry = build_registry(Path("/core-state"), lambda: RunReader(core_token), redactor, Client())
     def pulse():
         atomic_json(heartbeat, {"time": time.time()})
     worker = Worker(state, GitHubIssues(control_token), registry, redactor, pulse, stop.is_set)
     interval = max(15, min(300, int(os.environ.get("PAB_POLL_SECONDS", "30"))))
     failures = 0
-    print("Control worker ready; read-only capabilities; private Issues transport", flush=True)
+    print("Control worker ready; fixed read and bounded work capabilities; private Issues transport", flush=True)
     try:
         while not stop.is_set():
             pulse()
