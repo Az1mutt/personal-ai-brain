@@ -13,7 +13,7 @@ from .coding_protocol import CodingFailure, encoded, receive, send, require_peer
 from .inference_provider import request, respond
 from .inference_usage import Ledger
 from .work_contract import parse, unique_object
-from .work_store import locked
+from .work_store import locked, atomic_json
 
 STATE = Path('/var/lib/personal-ai-brain/inference')
 def loop(connection, task, ledger, provider=respond):
@@ -68,15 +68,34 @@ def loop(connection, task, ledger, provider=respond):
             return
         raise CodingFailure('model_budget_exceeded')
     except Exception as error:
+        import traceback
+        frames = traceback.extract_tb(error.__traceback__)
+        last = frames[-1]
+        # Source locations and exception class only; never messages, locals or provider payloads.
+        safe_module = Path(last.filename).name
+        if not safe_module.startswith(('inference_', 'coding_', 'work_')): safe_module = 'stdlib'
+        print('broker_failure ' + type(error).__name__ + ' ' + safe_module + ':' + str(last.lineno), flush=True)
         code = str(error) if isinstance(error, CodingFailure) and str(error) in CODES else 'model_invalid_response'
         usage = ledger.finish(identifier, code) if started else None
         try: send(connection, {'kind': 'failure', 'code': code, 'usage': usage})
         except OSError: pass
 
-def child(connection, task):
+def child(connection, task, config):
+    os.setsid()
+    # SCM_RIGHTS preserves O_NONBLOCK, but multiprocessing rebuilds a Python
+    # socket with timeout=None. Restore the timeout in the receiving process.
+    connection.settimeout(0.2)
     signal.signal(signal.SIGTERM, signal.SIG_DFL)
     signal.signal(signal.SIGINT, signal.SIG_DFL)
-    try: loop(connection, task, Ledger(STATE))
+    try:
+        if config['provider'] == 'acceptance':
+            from .inference_acceptance import Provider
+            provider = Provider(config['scenario'])
+        elif config['provider'] == 'openai': provider = respond
+        else:
+            send(connection, {'kind': 'failure', 'code': 'model_auth_failed', 'usage': None})
+            return
+        loop(connection, task, Ledger(STATE, config['provider']), provider)
     finally: connection.close()
 
 def supervise(process, connection, until, stopping):
@@ -85,12 +104,16 @@ def supervise(process, connection, until, stopping):
             if select.select([connection], [], [], 0.1)[0]:
                 try:
                     if connection.recv(1, socket.MSG_PEEK | socket.MSG_DONTWAIT) == b'': break
-                except BlockingIOError:
+                except (BlockingIOError, socket.timeout):
                     continue
                 time.sleep(0.025)
     finally:
+        try: os.killpg(process.pid, signal.SIGTERM)
+        except ProcessLookupError: pass
         if process.is_alive(): process.terminate()
         process.join(timeout=1)
+        try: os.killpg(process.pid, signal.SIGKILL)
+        except ProcessLookupError: pass
         if process.is_alive(): process.kill(); process.join(timeout=1)
 
 def serve():
@@ -99,6 +122,12 @@ def serve():
         raise RuntimeError('non_root_required')
     expected = pwd.getpwnam('pab-builder').pw_uid
     ledger = Ledger(STATE)
+    from .inference_config import read
+    if read()['provider'] == 'acceptance':
+        from .inference_probe import checks
+        evidence = checks()
+        atomic_json(STATE / 'security-evidence', evidence)
+        if not all(evidence.values()): raise RuntimeError('broker_boundary_failed')
     stopped = False
     def stop(*_):
         nonlocal stopped
@@ -127,8 +156,10 @@ def serve():
                     if set(message) != {'schema_version', 'task'} or message['schema_version'] != '0.1': continue
                     task = parse(encoded(message['task']))
                     if task['task_type'] != policy.TYPE or task['base_ref'] != policy.BASE: continue
+                    from .inference_config import read
+                    config = read()
                     # Spawn avoids inheriting listener/other connections into the paid worker.
-                    process = multiprocessing.get_context('spawn').Process(target=child, args=(connection, task))
+                    process = multiprocessing.get_context('spawn').Process(target=child, args=(connection, task, config))
                     process.start()
                     until = time.monotonic() + task['deadline_seconds']
                     supervise(process, connection, until, lambda: stopped)

@@ -10,8 +10,7 @@ Type=simple
 User=pab-inference
 Group=pab-builder
 WorkingDirectory=/var/lib/personal-ai-brain/inference
-Environment=PYTHONPATH=/opt/personal-ai-brain/builder/src
-ExecStart=/opt/personal-ai-brain/builder/venv/bin/python -B -m personal_ai_brain.inference_broker
+ExecStart=/usr/bin/env -i PATH=/usr/bin:/bin PYTHONPATH=/opt/personal-ai-brain/builder/src /opt/personal-ai-brain/builder/venv/bin/python -B -m personal_ai_brain.inference_broker
 Restart=on-failure
 RestartSec=2
 KillMode=control-group
@@ -36,12 +35,13 @@ RestrictSUIDSGID=yes
 RestrictRealtime=yes
 LockPersonality=yes
 RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+SocketBindDeny=any
 ReadWritePaths=/var/lib/personal-ai-brain/inference /run/personal-ai-brain-inference
 # Hide host state and /etc; bind only explicit broker dependencies back in.
 # Actual-identity namespace/DNS/IPC probes are required before live enablement.
 TemporaryFileSystem=/var/lib:ro /run:ro /etc:ro
 BindPaths=/var/lib/personal-ai-brain/inference /run/personal-ai-brain-inference
-BindReadOnlyPaths=/etc/personal-ai-brain/inference/credentials
+BindReadOnlyPaths=/etc/personal-ai-brain/inference
 BindReadOnlyPaths=/etc/ssl/certs /etc/resolv.conf /etc/hosts /etc/nsswitch.conf /etc/passwd /etc/group
 TasksMax=8
 MemoryMax=192M

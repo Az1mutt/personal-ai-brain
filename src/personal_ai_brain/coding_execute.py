@@ -9,7 +9,7 @@ from .coding_agent import BrokerAgent
 from .coding_protocol import CodingFailure
 from .coding_workspace import Workspace
 from .coding_policy import MODEL
-from .work_contract import timestamp
+from .work_contract import timestamp, Abort
 from .work_store import atomic_bytes, atomic_json
 from .work_sandbox import command, kill_tree, limits
 
@@ -40,7 +40,11 @@ def offline_tests(workspace, guard):
         if process.returncode != 0: raise CodingFailure('tests_failed')
         try: report = json.loads(output)
         except ValueError: raise CodingFailure('tests_failed') from None
-        if report != {'schema_version': '0.1', 'profile': 'normalize-label-v1', 'passed': 13}:
+        from .coding_test import CHECKS
+        checks = report.get('isolation', {})
+        if (set(checks) != CHECKS or not all(v is True for v in checks.values()) or
+                {k: v for k, v in report.items() if k != 'isolation'} !=
+                {'schema_version': '0.1', 'profile': 'normalize-label-v1', 'passed': 13}):
             raise CodingFailure('tests_failed')
         return report
     finally:
@@ -55,6 +59,8 @@ def execute(task, root, artifacts, guard, agent=None, tester=offline_tests):
     workspace = None
     def progress(usage):
         value['usage'] = usage
+        if usage.get('provider') == 'acceptance':
+            value.update(provider='acceptance-stub', model=None)
         atomic_json(artifacts / 'agent-result.json', value)
     atomic_json(artifacts / 'agent-result.json', value)
     atomic_bytes(artifacts / 'agent.log', b'model_phase_started\n')
@@ -62,6 +68,7 @@ def execute(task, root, artifacts, guard, agent=None, tester=offline_tests):
         guard()
         workspace = Workspace(root)
         agent.run(task, workspace, guard, progress)
+        value['operations'] = getattr(agent, 'operations', [])
         guard()
         changed, patch = workspace.validate()
         atomic_bytes(artifacts / 'patch.diff', patch.encode())
@@ -78,11 +85,10 @@ def execute(task, root, artifacts, guard, agent=None, tester=offline_tests):
         atomic_bytes(artifacts / 'agent.log', b'model_phase_ended\ndeterministic_validation_passed\noffline_tests_passed\n')
         return 'succeeded', 'coding_completed'
     except BaseException as error:
-        from .work_runner import Abort
         if isinstance(error, Abort):
             status, code = error.status, error.code
         elif isinstance(error, CodingFailure):
-            status, code = 'failed', str(error)
+            status, code = ('interrupted' if str(error) == 'interrupted' else 'failed'), str(error)
         elif isinstance(error, (OSError, KeyError)):
             status, code = 'failed', 'model_network_failed'
         else:

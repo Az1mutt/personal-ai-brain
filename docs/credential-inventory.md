@@ -2,7 +2,7 @@
 
 Metadata authority for platform execution. Values, token fragments and hashes do
 not belong here. Paths denote references, not a request to copy credentials.
-Verified 2026-10-10 Europe/Bratislava; unknowns must be resolved by the owner before
+Baseline verified 2026-10-10; inference metadata updated 2026-10-11 Europe/Bratislava; unknowns must be resolved by the owner before
 the corresponding new capability is enabled. File permission evidence is in
 [the execution map](builder-execution-plane.md), not duplicated as token material.
 
@@ -16,7 +16,7 @@ the corresponding new capability is enabled. File permission evidence is in
 | Parked Media device-flow reference | `/home/az1mutt/.config/personal-ai-brain/trakt-device.json` | Media-owned historical device-flow artifact; validity not assumed | Not inspected | Igor / Homelab-Media |
 | Parked Media token reference | `/home/az1mutt/.config/personal-ai-brain/trakt-token.json` | Media-owned; contents/scopes not inspected | Not inspected | Igor / Homelab-Media |
 | Builder GitHub publication — `personal-ai-brain-builder` | `/home/az1mutt/.config/personal-ai-brain/builder/github-token` | Only `Az1mutt/personal-ai-brain`; Contents read/write, Pull requests read/write, automatic Metadata read; selected UI scope per owner setup, branch push verified | 2026-12-09 (owner supplied) | Igor / Az1mutt |
-| Responses inference — owner setup pending, credential absent | `/etc/personal-ai-brain/inference/credentials/openai-api-key` (planned) | Dedicated Personal AI Brain OpenAI project; Responses inference with gpt-6.1-sol only, USD 15 enforced monthly project cap; no other platform credentials | Owner must record rotation/revocation date before enabling; no expiry assumed | Igor / proposed pab-inference service account |
+| Responses inference — owner setup pending, credential absent | `/etc/personal-ai-brain/inference/credentials/openai-api-key` (private directory verified; real file absent) | Dedicated Personal AI Brain OpenAI project; Responses inference with gpt-6.1-sol only, USD 15 enforced monthly project cap; no other platform credentials | Owner must record rotation/revocation date before enabling; no expiry assumed | Igor / local pab-inference UID 995; OpenAI service account pending |
 
 Inventory scope is observed platform execution references, not a host-wide secret
 discovery exercise. Media internals and unrelated trading credentials are excluded.

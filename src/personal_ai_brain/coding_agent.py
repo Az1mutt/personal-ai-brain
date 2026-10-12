@@ -10,6 +10,7 @@ class CodingAgent(Protocol):
 
 class BrokerAgent:
     def run(self, task, workspace, guard, progress):
+        self.operations = []
         with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as connection:
             connection.settimeout(0.2)
             connection.connect(policy.SOCKET)
@@ -22,6 +23,7 @@ class BrokerAgent:
                 if kind == 'usage':
                     progress(message['usage'])
                 elif kind == 'tool':
+                    self.operations.append(message['name'])
                     try: result = workspace.invoke(message['name'], message['arguments'])
                     except (OSError, UnicodeError, ValueError): raise CodingFailure('patch_rejected') from None
                     guard()

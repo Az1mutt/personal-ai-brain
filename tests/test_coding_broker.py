@@ -252,6 +252,8 @@ def test_real_reviewed_test_harness_and_success_artifacts(tmp_path, monkeypatch,
     root = workspace(tmp_path)
     artifacts = tmp_path / 'audit'; artifacts.mkdir()
     real_run_path = coding_test.runpy.run_path
+    monkeypatch.setattr(coding_test, 'isolation', lambda: dict.fromkeys(coding_test.CHECKS, True))
+    monkeypatch.setattr(coding_test.subprocess, 'Popen', lambda *a, **k: None)
     monkeypatch.setattr(coding_test.runpy, 'run_path', lambda _: real_run_path(str(root / policy.TARGET)))
     class Agent:
         def run(self, task, w, guard, progress): w.apply(policy.TARGET, '', CODE)

@@ -8,8 +8,9 @@ from .work_contract import digest, task_id, timestamp
 from .work_store import atomic_json, locked
 
 class Ledger:
-    def __init__(self, root):
+    def __init__(self, root, provider='openai'):
         self.root = Path(root)
+        self.provider = provider
         self.root.mkdir(mode=0o700, parents=True, exist_ok=True)
 
     def path(self, identifier):
@@ -31,7 +32,7 @@ class Ledger:
             if len(list(self.root.glob('*.json'))) >= 256:
                 raise CodingFailure('model_budget_exceeded')
             value = {'task_id': task['task_id'], 'payload_hash': digest(task),
-                     'status': 'reserved', 'started_at': timestamp(), 'turns': []}
+                     'status': 'reserved', 'started_at': timestamp(), 'turns': [], 'provider': self.provider}
             atomic_json(path, value)
             return value
 
@@ -45,10 +46,12 @@ class Ledger:
             month = now.strftime('%Y-%m')
             total = 0
             for record in self.root.glob('*.json'):
-                total += sum(t['reserved_micro_usd'] for t in json.loads(record.read_bytes())['turns'] if t['month'] == month)
+                item = json.loads(record.read_bytes())
+                if item.get('provider', 'openai') == self.provider:
+                    total += sum(t['reserved_micro_usd'] for t in item['turns'] if t['month'] == month)
             if (len(value['turns']) >= policy.MAX_TURNS or
                     (len(value['turns']) + 1) * policy.TURN_RESERVE_MICRO_USD > policy.TASK_BUDGET_MICRO_USD or
-                    total + policy.TURN_RESERVE_MICRO_USD > policy.MONTH_BUDGET_MICRO_USD):
+                    self.provider != 'acceptance' and total + policy.TURN_RESERVE_MICRO_USD > policy.MONTH_BUDGET_MICRO_USD):
                 raise CodingFailure('model_budget_exceeded')
             value['turns'].append({'month': month, 'reserved_at': timestamp(),
                                   'reserved_micro_usd': policy.TURN_RESERVE_MICRO_USD,

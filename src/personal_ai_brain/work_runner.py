@@ -11,7 +11,7 @@ import sys
 import time
 import multiprocessing
 
-from .work_contract import Rejected, REPOSITORY, parse, timestamp
+from .work_contract import Rejected, REPOSITORY, parse, timestamp, Abort
 from .work_store import Store, TERMINAL, atomic_json, locked
 from .work_sandbox import execute, kill_tree
 
@@ -28,10 +28,6 @@ def profile(path=PROFILE):
             or type(value['min_free_bytes']) is not int or value['min_free_bytes'] < 8388608):
         raise ValueError('invalid_operator_profile')
     return value
-
-class Abort(Exception):
-    def __init__(self, status, code):
-        self.status, self.code = status, code
 
 class Runner:
     def __init__(self, store, policy, stopping=lambda: False, executor=execute):

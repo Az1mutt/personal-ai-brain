@@ -1,7 +1,7 @@
 # Coding Agent Backend v0.1 — trusted inference broker
 
-Owner-approved Responses broker decision, 2026-10-11. Implementation checkpoint,
-not production or live-model acceptance. Codex CLI and self-hosted Agents are not
+Owner-approved Responses broker decision, 2026-10-11. Credentialless deployment and isolation acceptance complete;
+real model/API acceptance remains pending. Codex CLI and self-hosted Agents are not
 used. No framework or dependency added. Project State still records the last
 verified remote-fixture milestone.
 
@@ -10,19 +10,19 @@ verified remote-fixture milestone.
 The existing `pab-builder` supervisor owns admission, disposable Git checkout,
 four validated filesystem operations, deterministic patch validation and offline
 tests. `CodingAgent.run(task, workspace, guard, progress)` separates that lifecycle
-from the provider. The separate proposed non-login `pab-inference` identity owns
+from the provider. The separate non-login `pab-inference` identity (UID 995) owns
 only inference. It uses the existing root-owned Python runtime; no sudo, root,
 Docker, GitHub/Core/control/SSH credentials or publication/deployment API.
 
 | Authority | Canonical reference |
 |---|---|
 | Reviewed runtime | `/opt/personal-ai-brain/builder/src/personal_ai_brain` and existing stdlib venv |
-| Broker unit | `deploy/personal-ai-brain-inference-broker.service` (not installed) |
+| Broker unit | `deploy/personal-ai-brain-inference-broker.service` (active/enabled, provider disabled) |
 | Broker IPC | `/run/personal-ai-brain-inference/broker.sock`, directory 0750, socket 0660, broker UID / existing builder GID |
 | Inference ledger | `/var/lib/personal-ai-brain/inference`, broker-owned 0700, records 0600 |
 | Credential | `/etc/personal-ai-brain/inference/credentials/openai-api-key`, broker-owned 0600, enclosing credentials directory 0700; absent |
 | Existing runner state/artifacts | `/var/lib/personal-ai-brain/builder/{state,workspaces,audit}` unchanged |
-| Coding offline seed | `/opt/personal-ai-brain/builder/coding-repository.git`, root-owned, absent until reviewed bootstrap |
+| Coding offline seed | `/opt/personal-ai-brain/builder/coding-repository.git`, root-owned, verified exact approved base |
 
 Broker accepts only the actual `pab-builder` UID via `SO_PEERCRED`; runner checks
 the `pab-inference` peer UID. No TCP listener. Socket and credential are absent
@@ -30,7 +30,8 @@ from task mounts. Broker receives task text and mediated file responses, never a
 workspace mount. The service template masks host `/etc`, `/var/lib` and `/run`,
 reintroducing only broker state/socket/credential and DNS/TLS/account dependencies;
 home, devices, capabilities and process visibility are constrained separately.
-Actual systemd namespace validation remains required before enablement.
+Actual identity/namespace and offline sandbox probes passed credentiallessly;
+see the acceptance document and typed evidence.
 
 ## Reviewed first coding profile
 
@@ -39,7 +40,7 @@ repository `Az1mutt/personal-ai-brain`. Its exact approved base is
 `cde8c424b687c3ef99b98e4764da4a67c973d8b2`. Fixture base and behavior are unchanged.
 Coding deadline is 1–180 seconds. The operator profile must explicitly set
 `coding_enabled: true`; otherwise admitted coding work becomes blocked without
-contacting the broker. The production profile has not been changed.
+contacting the broker. The installed profile is now explicitly disabled after credentialless acceptance.
 
 The first profile is deliberately one real, small coding exercise. Exact goal:
 `Implement the reviewed label normalization exercise.` Exact criteria list:
@@ -103,18 +104,15 @@ reservation remains spent/uncertain rather than promising remote cancellation.
 
 ## Credential and live-acceptance gate
 
-The source and offline tests are implemented. No new account, credential, seed or
-service has been installed. No live API call, actual broker identity/mount proof,
-paid coding task, SSH-independence proof for the new broker, or external ChatGPT
-coding acceptance is claimed. The existing fixture proofs are not substitutes.
+The broker identity, runtime, seed and persistent service are installed. Live
+credentialless acceptance passed, including actual identity/mount/IPC boundaries,
+SSH-independent execution, lifecycle failures and the existing fixture. The real
+API key is absent; paid coding and external ChatGPT acceptance remain pending.
+See `credentialless-broker-acceptance.md` and its typed evidence.
 
-After owner setup in the checkpoint: review a masked-input/stdin-only installation
-flow before using it; bootstrap the single non-login identity and broker-only file;
-stage the reviewed unit/runtime/seed with coding admission disabled. Validate
-actual builder and broker UID permissions, masked mounts, IPC peer rejection,
-offline sandbox denial of broker socket/key, DNS/TLS, shutdown/restart/cancellation
-and disconnected-session operation. Then enable the reviewed profile for one
-bounded real model acceptance and repeat the complete regression suite.
+After owner setup, use the reviewed masked installer and the exact future paid
+acceptance procedure in `credentialless-broker-acceptance.md`. Do not redo the
+completed credentialless work or enable live inference implicitly.
 
 Only verified internal completion permits the human administrative Change/Review
 Lane closure and Project State sync. Tasks never push, create PRs or deploy; the

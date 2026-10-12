@@ -16,6 +16,11 @@ FIELDS = {'schema_version', 'task_id', 'task_type', 'repository', 'base_ref',
 class Rejected(ValueError):
     pass
 
+class Abort(Exception):
+    """Shared identity even when the runner is executed as python -m/__main__."""
+    def __init__(self, status, code):
+        self.status, self.code = status, code
+
 def timestamp():
     return datetime.now(timezone.utc).isoformat(timespec='milliseconds')
 
