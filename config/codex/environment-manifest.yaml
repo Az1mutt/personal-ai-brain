@@ -20,7 +20,28 @@
       },
       "credentials": { "store": "platform-managed external reference only" },
       "restrictions": ["no administrative homelab private key", "no assumption of local machine credentials"],
-      "required_checks": ["Git", "GitHub"]
+      "required_checks": ["Git", "GitHub"],
+      "environment_name": "pab-homelab-dev",
+      "repositories": [
+        "Az1mutt/personal-ai-brain",
+        "Az1mutt/homelab-infrastructure"
+      ],
+      "acceptance": {
+        "status": "VERIFIED_WITH_WARNING",
+        "verified_on": "2026-10-12",
+        "evidence": [
+          "Both repositories available in an isolated Codex Cloud workspace; repository AGENTS.md files load correctly.",
+          "Git works; Python, pytest, PyYAML and Node are available.",
+          "PowerShell installed under /workspace/.cloud-setup/powershell; not on the default PATH.",
+          "No user SSH directory, SSH agent socket or explicit homelab SSH configuration found.",
+          "No local Windows paths or credentials assumed; no Homelab administrative credential intentionally present."
+        ],
+        "warnings": [
+          "Absolute SSH capability absence could not be certified: a configuration-only probe encountered proxy behavior; no live Homelab connection was attempted.",
+          "pwsh is not currently on the default PATH; the saved Cloud start instructions provide an explicit shell PATH export."
+        ],
+        "documentation": "docs/codex-environments.md"
+      }
     }
   }
 }
