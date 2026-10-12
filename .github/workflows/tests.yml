@@ -20,3 +20,7 @@ jobs:
       - run: python -m pip install --upgrade pip
       - run: pip install -e ".[dev]"
       - run: pytest -q
+
+      - name: Offline Codex environment checks
+        shell: pwsh
+        run: ./scripts/codex/test-environment.ps1 -FixtureRoot (Join-Path $env:RUNNER_TEMP 'codex-environment-tests')

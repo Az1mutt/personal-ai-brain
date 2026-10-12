@@ -63,6 +63,7 @@ dependencies:
     dependency: "Hosts Core and control containers, separate credentials and durable private audit."
 
 important_open_loops:
+  - "Codex local environment: canonical checkouts and preserved worktrees established; old task roots, distinct ledger README, staged SSH-key candidate and auth ACL review remain preserved/pending. See docs/codex-environments.md."
   - "Retain bounded transport inbox/outbox records (2048-entry cap) and execution deduplication truth; no automatic pruning."
   - "Whole-host reboot acceptance for Work Runner remains pending; service enablement/restart and SSH independence are verified."
   - "Runner retention is manual with a 256-record admission cap; preserve deduplication truth and unmerged task artifacts."
@@ -88,6 +89,7 @@ portfolio:
 verification:
   last_verified: "2026-10-11"
   sources:
+    - "2026-10-12 local environment setup: canonical repositories, byte-identical preservation of six media files, global policy, offline script tests and local-homelab-admin PASS_WITH_WARNINGS. Existing runtime acceptance was not re-run."
     - "External ChatGPT acceptance Issue https://github.com/Az1mutt/personal-project-brain/issues/40: request 7ce4ff95-eceb-46d4-81b2-cd4c64324640 submitted task d297f109-8a4c-4020-9572-9d84243a46a8; capability_completed/outcome=completed; issue closed."
     - "External ChatGPT acceptance Issue https://github.com/Az1mutt/personal-project-brain/issues/41: request 4160f427-1438-4897-9b57-cdda82a0cfc7 returned the same task terminal succeeded, attempts=1, artifacts_retained=true; capability_completed/outcome=completed; issue closed."
     - "PR https://github.com/Az1mutt/personal-ai-brain/pull/14 merged as a5a8cef68126b7650e38d5361390791e8723cd5b; CI https://github.com/Az1mutt/personal-ai-brain/actions/runs/38097670258 passed for 023ca530f4920d1ba9e360dac9498bfd829b69dc."
