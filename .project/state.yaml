@@ -63,6 +63,7 @@ dependencies:
     dependency: "Hosts Core and control containers, separate credentials and durable private audit."
 
 important_open_loops:
+  - "Codex Cloud pab-homelab-dev: VERIFIED_WITH_WARNING on 2026-10-12 for repository-only PAB/Homelab development; task lifecycle and surface selection recorded in docs/codex-environments.md. Absolute SSH absence remains uncertified after a configuration-only proxy response; pwsh requires the saved startup PATH export and is not on default PATH. No live Homelab acceptance implied."
   - "Codex local environment: canonical checkouts and preserved worktrees established; old task roots, generated ledger artifacts, referenced SSH-key candidate and auth ACL review remain preserved/pending. Ledger README additions are already represented or superseded in canonical documentation. See docs/codex-environments.md."
   - "Retain bounded transport inbox/outbox records (2048-entry cap) and execution deduplication truth; no automatic pruning."
   - "Whole-host reboot acceptance for Work Runner remains pending; service enablement/restart and SSH independence are verified."
@@ -89,6 +90,7 @@ portfolio:
 verification:
   last_verified: "2026-10-11"
   sources:
+    - "2026-10-12 Cloud validation: both repositories and AGENTS.md available; Git, Python/pytest/PyYAML and Node available; PowerShell installed outside default PATH. No user SSH directory, agent socket or explicit homelab configuration found; no administrative credential intentionally present. See config/codex/environment-manifest.yaml and docs/codex-environments.md for acceptance warnings."
     - "2026-10-12 conservative cleanup: verified duplicate homelab/media checkouts removed; redundant old runner worktree and stale Linux registration removed; two historical reflog commits preserved under local canonical refs. Non-secret bootstrap source archived; credential consumers and diagnostic remain preserved."
     - "2026-10-12 local environment setup: canonical repositories, byte-identical preservation of six media files, global policy, offline script tests and local-homelab-admin PASS_WITH_WARNINGS. Existing runtime acceptance was not re-run."
     - "External ChatGPT acceptance Issue https://github.com/Az1mutt/personal-project-brain/issues/40: request 7ce4ff95-eceb-46d4-81b2-cd4c64324640 submitted task d297f109-8a4c-4020-9572-9d84243a46a8; capability_completed/outcome=completed; issue closed."
