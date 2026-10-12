@@ -1,0 +1,36 @@
+import getpass
+import json
+import os
+from pathlib import Path
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
+
+target_dir = Path.home() / '.config' / 'personal-ai-brain'
+target = target_dir / 'github-token'
+if target.exists():
+    raise SystemExit('Token file already exists; kept unchanged. Ask Codex to verify it.')
+token = getpass.getpass('Read-only GitHub token (input hidden): ').strip()
+if not token or any(c.isspace() for c in token):
+    raise SystemExit('Empty or malformed token; nothing saved.')
+request = Request(
+    'https://api.github.com/repos/Az1mutt/personal-project-brain/contents/core/project-map.yaml',
+    headers={'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json',
+             'User-Agent': 'personal-ai-brain-bootstrap', 'X-GitHub-Api-Version': '2022-11-28'},
+)
+try:
+    with urlopen(request, timeout=20) as response:
+        payload = json.load(response)
+except HTTPError as error:
+    raise SystemExit(f'GitHub read check failed: HTTP {error.code}. Nothing saved.') from None
+except (URLError, TimeoutError):
+    raise SystemExit('GitHub connection failed. Nothing saved.') from None
+if payload.get('type') != 'file':
+    raise SystemExit('Unexpected GitHub response. Nothing saved.')
+os.umask(0o077)
+target_dir.mkdir(parents=True, exist_ok=True, mode=0o700)
+os.chmod(target_dir, 0o700)
+fd = os.open(target, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+with os.fdopen(fd, 'w') as stream:
+    stream.write(token + '\n')
+print('Private repository read verified. Token saved outside the repository with mode 600.')
+print('Prerequisites ready. Tell Codex: hotovo.')

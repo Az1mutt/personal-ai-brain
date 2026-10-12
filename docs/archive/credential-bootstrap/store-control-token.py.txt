@@ -1,0 +1,21 @@
+"""Store the dedicated Issues credential interactively, never through chat."""
+import getpass
+import os
+from pathlib import Path
+import sys
+
+if not sys.stdin.isatty():
+    raise SystemExit('Run in an interactive SSH terminal; hidden input required.')
+os.umask(0o077)
+directory = Path.home() / '.config/personal-ai-brain'
+directory.mkdir(mode=0o700, parents=True, exist_ok=True)
+destination = directory / 'github-control-token'
+if destination.exists():
+    raise SystemExit('Control credential already exists; left unchanged.')
+token = getpass.getpass('New Issues-only GitHub token (input hidden): ').strip()
+if not token.startswith('github_pat_') or any(c.isspace() for c in token):
+    raise SystemExit('Expected a fine-grained GitHub token; nothing saved.')
+fd = os.open(destination, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+with os.fdopen(fd, 'w') as output:
+    output.write(token + '\n')
+print('Separate control credential saved with mode 600. Existing Core credential unchanged.')
