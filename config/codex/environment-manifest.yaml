@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "profiles": {
+    "local-homelab-admin": {
+      "surface": "codex-desktop/local",
+      "project_root": "C:\\Projects",
+      "capabilities": {
+        "github": "connector/local git as available",
+        "homelab_ssh": "admin via canonical homelab alias"
+      },
+      "credentials": { "store": "external reference only" },
+      "restrictions": ["no task-local private-key copies"],
+      "required_checks": ["Codex config", "Global AGENTS", "Project root", "Git", "homelab alias", "homelab BatchMode"]
+    },
+    "cloud-github-dev": {
+      "surface": "codex-cloud",
+      "capabilities": {
+        "github": "repository development",
+        "homelab_ssh": "forbidden"
+      },
+      "credentials": { "store": "platform-managed external reference only" },
+      "restrictions": ["no administrative homelab private key", "no assumption of local machine credentials"],
+      "required_checks": ["Git", "GitHub"]
+    }
+  }
+}
