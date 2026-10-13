@@ -104,6 +104,92 @@ Cloud tasks already have isolated workspaces. Use their existing checkouts; do
 not create an additional Git worktree unless explicitly requested. The Windows
 paths in the local setup section below apply only to Codex Local.
 
+## Canonical Local execution lane
+
+**local-homelab-admin** is the canonical logical profile for Codex Desktop
+**Local / Worktree on Igor's Windows PC**. One logical profile covers both
+canonical repositories:
+
+- `C:\Projects\personal-ai-brain`
+- `C:\Projects\homelab-infrastructure`
+
+Use this lane when a task needs or is likely to need live Homelab inspection,
+Docker/service/log/filesystem inspection on the Homelab, deployment or runtime
+acceptance. For a bounded implementation followed by deployment/acceptance,
+prefer Local from the start. Use **pab-homelab-dev** Cloud when work is strictly
+repository-only and requires no live Homelab access.
+
+Repository `AGENTS.md` remains the project-specific authority; the existing
+`~/.codex/AGENTS.md` supplies global Local instructions. Do not duplicate the global
+file into either repository. The Windows checkout paths are Local conventions,
+not Cloud dependencies.
+
+### Existing SSH route and credential ownership
+
+Live Homelab administration requires explicit task authorization and the existing
+canonical **`ssh homelab`** route. Inherit machine SSH resolution from
+`~/.ssh/config`; the existing administrative identity remains in the user's
+machine-local `.ssh` store. Its purpose is Homelab administration, and the manifest
+stores only that external reference. Never copy it into a task workspace,
+repository or Cloud environment, and never track its actual path, Homelab IP or
+username in project configuration.
+
+The previously verified baseline includes usable canonical checkouts, existing
+global instructions and a successful non-interactive BatchMode probe. This is
+retained evidence, not a new live check. Historical/ambiguous SSH candidates remain
+preserved; revisit them only if they affect the canonical route. No deletion,
+rotation or new key is authorized by this policy. Consider a new key only after
+proving the canonical route unusable and finding no suitable authorized credential.
+
+### Desktop configuration and remaining Local acceptance
+
+As of **2026-10-13**, this policy update was prepared from Cloud. The current
+Windows Desktop installation, machine-global configuration and Windows
+project-root `.codex` settings were not accessible. Whether that installed version
+exposes first-class project-local environments is **UNKNOWN**. Effective
+Organization / Agent Security / managed Local policy is **UNKNOWN**; no policy was
+created or inferred. No Desktop-recognized repo-local environment file has been
+created or verified by this update. The logical profile alone does not provision
+an execution environment.
+
+Complete the following narrow acceptance in Codex Desktop Local, reusing prior
+evidence instead of repeating the broad audit:
+
+1. Inspect Local / Worktree mode, exposed Local environment settings, existing
+   `.codex` settings in both canonical Windows checkouts, and relevant global
+   configuration/instructions. Read only relevant settings, never credential
+   values. Record the installed version and visible managed-policy effects;
+   unavailable policy stays UNKNOWN.
+2. If the installed product supports project-local environments, use its supported
+   UI/configuration format in each repository's `.codex` directory under the
+   single logical `local-homelab-admin` profile. Do not invent a format or track
+   machine secrets/private connection details. Setup scripts prepare project
+   dependencies only and must never automatically connect to the Homelab.
+3. If explicit actions are supported, add **Verify Homelab** using only:
+
+   ```sh
+   ssh -o BatchMode=yes -o ConnectTimeout=10 homelab true
+   ```
+
+   Run it explicitly from Local using existing SSH configuration. Report alias
+   availability, resolved identity path only, BatchMode PASS/FAIL, and whether
+   that identity actually authenticated. Configuration resolution alone does not
+   prove which identity authenticated; use bounded sanitized authentication
+   evidence if needed. Do not enumerate unrelated keys or export raw SSH logs.
+4. Verify Desktop recognizes each repo-local environment, both canonical paths
+   are usable, and global plus repository instructions resolve correctly. If
+   Worktree mode is tested, verify setup in a fresh worktree without changing
+   live Homelab state. Do not infer Worktree acceptance from Local acceptance.
+5. Verify no SSH credential entered either repository or Cloud configuration and
+   the Cloud manifest still forbids administrative SSH. Record actual generated
+   configuration paths, sanitized results and remaining warnings here and in the
+   manifest; update Project State only after a meaningful verified milestone.
+
+Current Local acceptance is **NOT_RUN** from this Cloud task: Desktop execution,
+configuration recognition, Windows paths, instruction resolution, current SSH
+identity and BatchMode result remain unverified. No live connection, credential
+copy, key operation, service change or new platform capability was performed.
+
 ## Repeatable local setup
 
 1. Inspect C:\Projects destination collisions. Stop a component if meaningful

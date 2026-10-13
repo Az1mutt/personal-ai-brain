@@ -8,9 +8,35 @@
         "github": "connector/local git as available",
         "homelab_ssh": "admin via canonical homelab alias"
       },
-      "credentials": { "store": "external reference only" },
-      "restrictions": ["no task-local private-key copies"],
-      "required_checks": ["Codex config", "Global AGENTS", "Project root", "Git", "homelab alias", "homelab BatchMode"]
+      "credentials": { "store": "external machine-local SSH identity reference only; inherit existing ~/.ssh/config" },
+      "restrictions": ["no task-local or repository private-key copies", "no Homelab administrative credential in Cloud", "no tracked Homelab IP, username or identity path", "live access only through existing ssh homelab with explicit task authorization"],
+      "required_checks": ["Codex config", "Global AGENTS", "Project root", "Git", "homelab alias", "homelab BatchMode"],
+      "execution": "Codex Desktop Local / Worktree on Igor's Windows PC",
+      "canonical_repositories": [
+        "C:\\Projects\\personal-ai-brain",
+        "C:\\Projects\\homelab-infrastructure"
+      ],
+      "instructions": {
+        "global_local": "~/.codex/AGENTS.md",
+        "project": "repository AGENTS.md"
+      },
+      "selection": "Use when live Homelab inspection, Docker/service/log/filesystem inspection, deployment or runtime acceptance is needed or likely. Prefer Local from the start for implementation followed by Homelab deployment/acceptance.",
+      "local_environment_configuration": {
+        "status": "UNKNOWN",
+        "reason": "Current Windows Codex Desktop installation and project-local settings are unavailable from the Cloud task; supported format and recognition must be verified locally.",
+        "setup_boundary": "Project/dependency preparation only; no automatic live Homelab connection.",
+        "explicit_action_if_supported": {
+          "name": "Verify Homelab",
+          "command": "ssh -o BatchMode=yes -o ConnectTimeout=10 homelab true"
+        },
+        "managed_policy": "UNKNOWN"
+      },
+      "verification": {
+        "baseline": "Previously verified local canonical checkouts, global instructions and non-interactive homelab BatchMode access; reuse existing evidence.",
+        "current_local_acceptance": "NOT_RUN",
+        "credential_reference": "Existing external machine-local SSH identity resolved by ~/.ssh/config for homelab; current effective identity path and successful authentication not reverified from Cloud.",
+        "historical_candidates": "Preserved pending conclusive reconciliation; do not delete, rotate or enumerate unrelated keys."
+      }
     },
     "cloud-github-dev": {
       "surface": "codex-cloud",
