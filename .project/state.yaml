@@ -64,7 +64,7 @@ dependencies:
 
 important_open_loops:
   - "Codex Cloud pab-homelab-dev: VERIFIED_WITH_WARNING on 2026-10-12 for repository-only PAB/Homelab development; task lifecycle and surface selection recorded in docs/codex-environments.md. Absolute SSH absence remains uncertified after a configuration-only proxy response; pwsh requires the saved startup PATH export and is not on default PATH. No live Homelab acceptance implied."
-  - "Codex local environment: canonical checkouts and preserved worktrees established; old task roots, generated ledger artifacts, referenced SSH-key candidate and auth ACL review remain preserved/pending. Ledger README additions are already represented or superseded in canonical documentation. See docs/codex-environments.md."
+  - "Codex local-homelab-admin: Local acceptance VERIFIED_WITH_WARNINGS on 2026-10-13; installed project environment/action schema confirmed, exact user-context SSH probe passed; UI recognition, fresh Worktree execution and organization policy remain unverified. Canonical checkouts and preserved worktrees established; old task roots, generated ledger artifacts, referenced SSH-key candidate and auth ACL review remain preserved/pending. Ledger README additions are already represented or superseded in canonical documentation. See docs/codex-environments.md."
   - "Retain bounded transport inbox/outbox records (2048-entry cap) and execution deduplication truth; no automatic pruning."
   - "Whole-host reboot acceptance for Work Runner remains pending; service enablement/restart and SSH independence are verified."
   - "Runner retention is manual with a 256-record admission cap; preserve deduplication truth and unmerged task artifacts."

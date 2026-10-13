@@ -8,9 +8,38 @@
         "github": "connector/local git as available",
         "homelab_ssh": "admin via canonical homelab alias"
       },
-      "credentials": { "store": "external reference only" },
-      "restrictions": ["no task-local private-key copies"],
-      "required_checks": ["Codex config", "Global AGENTS", "Project root", "Git", "homelab alias", "homelab BatchMode"]
+      "credentials": { "store": "external machine-local SSH identity reference only; inherit existing ~/.ssh/config" },
+      "restrictions": ["no task-local or repository private-key copies", "no Homelab administrative credential in Cloud", "no tracked Homelab IP, username or identity path", "live access only through existing ssh homelab with explicit task authorization"],
+      "required_checks": ["Codex config", "Global AGENTS", "Project root", "Git", "homelab alias", "homelab BatchMode"],
+      "execution": "Codex Desktop Local / Worktree on Igor's Windows PC",
+      "canonical_repositories": [
+        "C:\\Projects\\personal-ai-brain",
+        "C:\\Projects\\homelab-infrastructure"
+      ],
+      "instructions": {
+        "global_local": "~/.codex/AGENTS.md",
+        "project": "repository AGENTS.md"
+      },
+      "selection": "Use when live Homelab inspection, Docker/service/log/filesystem inspection, deployment or runtime acceptance is needed or likely. Prefer Local from the start for implementation followed by Homelab deployment/acceptance.",
+      "local_environment_configuration": {
+        "status": "SUPPORTED",
+        "reason": "Installed OpenAI.Codex 26.1007.2314.0 loader and schema inspected on 2026-10-13; project-local .codex/environments/environment.toml supported. PAB file validated; settings-pane recognition and fresh Worktree execution not tested.",
+        "configuration_path": ".codex/environments/environment.toml",
+        "setup_boundary": "Project/dependency preparation only; no automatic live Homelab connection.",
+        "explicit_action_if_supported": {
+          "name": "Verify Homelab",
+          "command": "ssh -o BatchMode=yes -o ConnectTimeout=10 homelab true"
+        },
+        "managed_policy": "UNKNOWN"
+      },
+      "verification": {
+        "baseline": "Previously verified local canonical checkouts, global instructions and non-interactive homelab BatchMode access; reuse existing evidence.",
+        "current_local_acceptance": "VERIFIED_WITH_WARNINGS",
+        "verified_on": "2026-10-13",
+        "evidence": "Both canonical repositories clean before work and AGENTS readable; global policy/config inspected; user-context alias resolution and exact BatchMode probe PASS. Task sandbox uses a separate Windows account; authorized escalation required for user SSH route.",
+        "credential_reference": "One existing external machine-local SSH identity resolved by homelab; IdentitiesOnly=yes, ControlMaster=false, GSSAPI disabled and BatchMode exit 0 attribute access to that identity. Path reported locally only; agent-backed signing not distinguished.",
+        "historical_candidates": "Known historical task-folder identity candidate and public file still exist; equivalence and old consumers unresolved, but not selected by canonical alias. Preserved pre-existing policy exception; no new copies. UI recognition, fresh Worktree execution and organization policy remain unverified."
+      }
     },
     "cloud-github-dev": {
       "surface": "codex-cloud",

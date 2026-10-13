@@ -104,6 +104,83 @@ Cloud tasks already have isolated workspaces. Use their existing checkouts; do
 not create an additional Git worktree unless explicitly requested. The Windows
 paths in the local setup section below apply only to Codex Local.
 
+## Canonical Local execution lane
+
+**local-homelab-admin** is the canonical logical profile for Codex Desktop
+**Local / Worktree on Igor's Windows PC**. One logical profile covers both
+canonical repositories:
+
+- `C:\Projects\personal-ai-brain`
+- `C:\Projects\homelab-infrastructure`
+
+Use this lane when a task needs or is likely to need live Homelab inspection,
+Docker/service/log/filesystem inspection on the Homelab, deployment or runtime
+acceptance. For a bounded implementation followed by deployment/acceptance,
+prefer Local from the start. Use **pab-homelab-dev** Cloud when work is strictly
+repository-only and requires no live Homelab access.
+
+Repository `AGENTS.md` remains the project-specific authority; the existing
+`~/.codex/AGENTS.md` supplies global Local instructions. Do not duplicate the global
+file into either repository. The Windows checkout paths are Local conventions,
+not Cloud dependencies.
+
+### Existing SSH route and credential ownership
+
+Live Homelab administration requires explicit task authorization and the existing
+canonical **`ssh homelab`** route. Inherit machine SSH resolution from
+`~/.ssh/config`; the existing administrative identity remains in the user's
+machine-local `.ssh` store. Its purpose is Homelab administration, and the manifest
+stores only that external reference. Never copy it into a task workspace,
+repository or Cloud environment, and never track its actual path, Homelab IP or
+username in project configuration.
+
+### Windows Local acceptance — 2026-10-13
+
+**VERIFIED_WITH_WARNINGS** for the Local profile. The exact authorized probe
+`ssh -o BatchMode=yes -o ConnectTimeout=10 homelab true` exited **0** under
+Igor's Windows account. Alias resolution selects one existing machine-local
+identity with `IdentitiesOnly=yes`, `ControlMaster=false` and GSSAPI disabled.
+Together with BatchMode success, this attributes access to the configured identity
+(including possible SSH-agent signing for that identity); no raw authentication
+log or private key was read. The identity path was reported locally, not added to
+this profile configuration.
+
+The known historical task-folder identity candidate and its public file still
+exist. Their identity equivalence and old consumers remain unresolved; neither is
+selected by the canonical alias. This is a preserved pre-existing exception to
+the no-task-local-credentials policy, not a claim that all old copies are absent.
+No credentials were copied, created, rotated or deleted. Cloud isolation evidence
+remains the dated Cloud record above; it was not re-audited from Windows.
+
+| Local check | Result |
+| --- | --- |
+| Installed Desktop | `OpenAI.Codex` package `26.1007.2314.0`; running bundled Codex runtime, sandbox runner `0.162.0-alpha.17.2` |
+| Local execution | PASS: this task runs in the canonical Windows checkout |
+| Worktree support | YES: installed app exposes managed worktree operations and setup loader; fresh-worktree execution NOT_RUN |
+| First-class Local environment configuration | YES: installed `app.asar` defines the version/name/setup/actions schema and discovers `.codex/environments/*.toml` |
+| Project-root configuration | `.codex/environments/environment.toml` added in Personal AI Brain using that installed schema; empty setup and explicit Windows-only Verify Homelab action |
+| Configuration recognition | Installed loader/schema inspected and file validated; live settings-pane/action rendering NOT_RUN |
+| Personal AI Brain checkout | Available, initially clean on main; switched to existing `docs/local-homelab-profile`; repository AGENTS readable |
+| Homelab infrastructure checkout | Available, clean on main; repository AGENTS readable; left unchanged, with no `.codex` configuration |
+| Global Local policy | Existing `~/.codex/AGENTS.md` read and retained as global authority |
+| Machine configuration | Existing `~/.codex/config.toml`; Windows elevated sandbox configured; Personal AI Brain trusted |
+| Effective task boundary | Workspace-write, restricted network, auto-review escalation; sandbox uses a separate Windows account |
+| Organization / Agent Security | UNKNOWN: organization policy source/settings not exposed by the available inspection surface; observed task restrictions do not prove their organizational provenance |
+
+Local environments are project setup/action files, not Cloud-style published
+credential-bearing environments. The logical **local-homelab-admin** profile still
+spans both canonical repositories and relies on machine-local SSH and policy.
+The installed loader and schema corroborate the supported mechanism described in
+[OpenAI Local environments documentation](https://learn.chatgpt.com/docs/environments/local-environment).
+The manual action is optional convenience; its exact command passed independently.
+No automatic SSH startup was added. A separate Worktree/UI acceptance is not
+implied by this Local acceptance. No Personal AI Brain runtime or service changed.
+
+The default sandbox account does not inherit Igor's SSH route. The live probe used
+the authorized user-context escalation; a sandbox-only alias failure must not be
+misreported as failure of the machine's canonical SSH configuration. Future live
+tasks still require explicit authorization and applicable approval boundaries.
+
 ## Repeatable local setup
 
 1. Inspect C:\Projects destination collisions. Stop a component if meaningful
