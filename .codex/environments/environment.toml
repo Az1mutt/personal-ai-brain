@@ -1,0 +1,11 @@
+version = 1
+name = "local-homelab-admin"
+
+[setup]
+script = ""
+
+[[actions]]
+name = "Verify Homelab"
+icon = "test"
+command = "ssh -o BatchMode=yes -o ConnectTimeout=10 homelab true"
+platform = "win32"

@@ -134,61 +134,52 @@ stores only that external reference. Never copy it into a task workspace,
 repository or Cloud environment, and never track its actual path, Homelab IP or
 username in project configuration.
 
-The previously verified baseline includes usable canonical checkouts, existing
-global instructions and a successful non-interactive BatchMode probe. This is
-retained evidence, not a new live check. Historical/ambiguous SSH candidates remain
-preserved; revisit them only if they affect the canonical route. No deletion,
-rotation or new key is authorized by this policy. Consider a new key only after
-proving the canonical route unusable and finding no suitable authorized credential.
+### Windows Local acceptance — 2026-10-13
 
-### Desktop configuration and remaining Local acceptance
+**VERIFIED_WITH_WARNINGS** for the Local profile. The exact authorized probe
+`ssh -o BatchMode=yes -o ConnectTimeout=10 homelab true` exited **0** under
+Igor's Windows account. Alias resolution selects one existing machine-local
+identity with `IdentitiesOnly=yes`, `ControlMaster=false` and GSSAPI disabled.
+Together with BatchMode success, this attributes access to the configured identity
+(including possible SSH-agent signing for that identity); no raw authentication
+log or private key was read. The identity path was reported locally, not added to
+this profile configuration.
 
-As of **2026-10-13**, this policy update was prepared from Cloud. The current
-Windows Desktop installation, machine-global configuration and Windows
-project-root `.codex` settings were not accessible. Whether that installed version
-exposes first-class project-local environments is **UNKNOWN**. Effective
-Organization / Agent Security / managed Local policy is **UNKNOWN**; no policy was
-created or inferred. No Desktop-recognized repo-local environment file has been
-created or verified by this update. The logical profile alone does not provision
-an execution environment.
+The known historical task-folder identity candidate and its public file still
+exist. Their identity equivalence and old consumers remain unresolved; neither is
+selected by the canonical alias. This is a preserved pre-existing exception to
+the no-task-local-credentials policy, not a claim that all old copies are absent.
+No credentials were copied, created, rotated or deleted. Cloud isolation evidence
+remains the dated Cloud record above; it was not re-audited from Windows.
 
-Complete the following narrow acceptance in Codex Desktop Local, reusing prior
-evidence instead of repeating the broad audit:
+| Local check | Result |
+| --- | --- |
+| Installed Desktop | `OpenAI.Codex` package `26.1007.2314.0`; running bundled Codex runtime, sandbox runner `0.162.0-alpha.17.2` |
+| Local execution | PASS: this task runs in the canonical Windows checkout |
+| Worktree support | YES: installed app exposes managed worktree operations and setup loader; fresh-worktree execution NOT_RUN |
+| First-class Local environment configuration | YES: installed `app.asar` defines the version/name/setup/actions schema and discovers `.codex/environments/*.toml` |
+| Project-root configuration | `.codex/environments/environment.toml` added in Personal AI Brain using that installed schema; empty setup and explicit Windows-only Verify Homelab action |
+| Configuration recognition | Installed loader/schema inspected and file validated; live settings-pane/action rendering NOT_RUN |
+| Personal AI Brain checkout | Available, initially clean on main; switched to existing `docs/local-homelab-profile`; repository AGENTS readable |
+| Homelab infrastructure checkout | Available, clean on main; repository AGENTS readable; left unchanged, with no `.codex` configuration |
+| Global Local policy | Existing `~/.codex/AGENTS.md` read and retained as global authority |
+| Machine configuration | Existing `~/.codex/config.toml`; Windows elevated sandbox configured; Personal AI Brain trusted |
+| Effective task boundary | Workspace-write, restricted network, auto-review escalation; sandbox uses a separate Windows account |
+| Organization / Agent Security | UNKNOWN: organization policy source/settings not exposed by the available inspection surface; observed task restrictions do not prove their organizational provenance |
 
-1. Inspect Local / Worktree mode, exposed Local environment settings, existing
-   `.codex` settings in both canonical Windows checkouts, and relevant global
-   configuration/instructions. Read only relevant settings, never credential
-   values. Record the installed version and visible managed-policy effects;
-   unavailable policy stays UNKNOWN.
-2. If the installed product supports project-local environments, use its supported
-   UI/configuration format in each repository's `.codex` directory under the
-   single logical `local-homelab-admin` profile. Do not invent a format or track
-   machine secrets/private connection details. Setup scripts prepare project
-   dependencies only and must never automatically connect to the Homelab.
-3. If explicit actions are supported, add **Verify Homelab** using only:
+Local environments are project setup/action files, not Cloud-style published
+credential-bearing environments. The logical **local-homelab-admin** profile still
+spans both canonical repositories and relies on machine-local SSH and policy.
+The installed loader and schema corroborate the supported mechanism described in
+[OpenAI Local environments documentation](https://learn.chatgpt.com/docs/environments/local-environment).
+The manual action is optional convenience; its exact command passed independently.
+No automatic SSH startup was added. A separate Worktree/UI acceptance is not
+implied by this Local acceptance. No Personal AI Brain runtime or service changed.
 
-   ```sh
-   ssh -o BatchMode=yes -o ConnectTimeout=10 homelab true
-   ```
-
-   Run it explicitly from Local using existing SSH configuration. Report alias
-   availability, resolved identity path only, BatchMode PASS/FAIL, and whether
-   that identity actually authenticated. Configuration resolution alone does not
-   prove which identity authenticated; use bounded sanitized authentication
-   evidence if needed. Do not enumerate unrelated keys or export raw SSH logs.
-4. Verify Desktop recognizes each repo-local environment, both canonical paths
-   are usable, and global plus repository instructions resolve correctly. If
-   Worktree mode is tested, verify setup in a fresh worktree without changing
-   live Homelab state. Do not infer Worktree acceptance from Local acceptance.
-5. Verify no SSH credential entered either repository or Cloud configuration and
-   the Cloud manifest still forbids administrative SSH. Record actual generated
-   configuration paths, sanitized results and remaining warnings here and in the
-   manifest; update Project State only after a meaningful verified milestone.
-
-Current Local acceptance is **NOT_RUN** from this Cloud task: Desktop execution,
-configuration recognition, Windows paths, instruction resolution, current SSH
-identity and BatchMode result remain unverified. No live connection, credential
-copy, key operation, service change or new platform capability was performed.
+The default sandbox account does not inherit Igor's SSH route. The live probe used
+the authorized user-context escalation; a sandbox-only alias failure must not be
+misreported as failure of the machine's canonical SSH configuration. Future live
+tasks still require explicit authorization and applicable approval boundaries.
 
 ## Repeatable local setup
 
