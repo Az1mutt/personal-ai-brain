@@ -73,8 +73,10 @@ portfolio:
     remains pending; live coding/provider gates stay disabled.
 
 verification:
-  last_verified: "2026-10-13"
+  last_verified: "2026-10-14"
   sources:
+    - "Foundation PR https://github.com/Az1mutt/personal-ai-brain/pull/19 squash-merged as 1d0275e02a9dcf920381fed7f83b9232da1f3a11; merged tree equals tested head 75a53e4fc6ccddb058fffbbd20e5f28f2f0f88bc. CI https://github.com/Az1mutt/personal-ai-brain/actions/runs/38547344327 passed Python tests and offline Codex environment checks."
+    - "2026-10-14 read-only live refresh: runtime source/unit equivalence, root-owned non-writable modules, unchanged acceptance receipt, active broker/builder, private networks, no-new-privileges, empty capabilities and broker IP deny-all confirmed; provider and coding gates remain disabled. No deployment or restart required."
     - 'docs/CODING_BROKER_CHECKPOINT.md: exact recovery, current-main replay equivalence, 235 tests and bounded read-only runtime revalidation on 2026-10-13.'
     - 'docs/credentialless-broker-evidence.json: historical credentialless acceptance; unchanged live receipt verified 2026-10-13.'
     - "2026-10-12 Cloud validation: both repositories and AGENTS.md available; Git, Python/pytest/PyYAML and Node available; PowerShell installed outside default PATH. No user SSH directory, agent socket or explicit homelab configuration found; no administrative credential intentionally present. See config/codex/environment-manifest.yaml and docs/codex-environments.md for acceptance warnings."

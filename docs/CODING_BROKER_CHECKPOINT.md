@@ -2,6 +2,12 @@
 
 ## Current integration and milestone decision — 2026-10-13
 
+Closure on 2026-10-14: PR #19 merged as
+`1d0275e02a9dcf920381fed7f83b9232da1f3a11`; its tree equals tested PR head
+`75a53e4fc6ccddb058fffbbd20e5f28f2f0f88bc`. GitHub Actions run `38547344327`
+passed Python tests and offline Codex environment checks. A fresh read-only live
+check confirmed unchanged source, receipt, isolation and disabled gates.
+
 Credentialless Coding Agent Broker v0.1 is approved as a standalone foundation
 milestone. Real Ollama/OpenAI acceptance is not its merge gate. Runtime gates
 remain disabled; no real provider, router, autonomous publisher or deployment
