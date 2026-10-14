@@ -11,7 +11,7 @@ import sys
 import time
 import multiprocessing
 
-from .work_contract import Rejected, REPOSITORY, parse, timestamp
+from .work_contract import Rejected, REPOSITORY, parse, timestamp, Abort
 from .work_store import Store, TERMINAL, atomic_json, locked
 from .work_sandbox import execute, kill_tree
 
@@ -20,17 +20,14 @@ PROFILE = Path('/etc/personal-ai-brain/builder/profile.json')
 
 def profile(path=PROFILE):
     value = json.loads(path.read_bytes())
-    if (set(value) != {'schema_version', 'repository', 'base_ref', 'seed', 'min_free_bytes'}
+    if (set(value) - {'coding_enabled'} != {'schema_version', 'repository', 'base_ref', 'seed', 'min_free_bytes'}
+            or type(value.get('coding_enabled', False)) is not bool
             or value['schema_version'] != '0.1' or value['repository'] != REPOSITORY
             or not re.fullmatch('[0-9a-f]{40}', value['base_ref'])
             or value['seed'] != '/opt/personal-ai-brain/builder/repository.git'
             or type(value['min_free_bytes']) is not int or value['min_free_bytes'] < 8388608):
         raise ValueError('invalid_operator_profile')
     return value
-
-class Abort(Exception):
-    def __init__(self, status, code):
-        self.status, self.code = status, code
 
 class Runner:
     def __init__(self, store, policy, stopping=lambda: False, executor=execute):
@@ -43,6 +40,10 @@ class Runner:
                 identifier = record['task_id']
                 atomic_json(self.store.audit / identifier / 'test-result.json',
                             {'status': 'not_completed', 'code': 'interrupted_no_retry'})
+                if record['request']['task_type'] == 'coding.patch-test.v1':
+                    path = self.store.audit / identifier / 'agent-result.json'
+                    prior = json.loads(path.read_bytes())
+                    atomic_json(path, {**prior, 'status': 'interrupted', 'code': 'interrupted'})
                 self.store.transition(identifier, 'interrupted', 'interrupted_no_retry')
 
     def guard(self, identifier, deadline):
@@ -74,8 +75,10 @@ class Runner:
         parent = self.store.workspaces / identifier
         parent.mkdir(mode=0o700)
         workspace = parent / 'repo'
+        seed = ('/opt/personal-ai-brain/builder/coding-repository.git'
+                if record['request']['task_type'] == 'coding.patch-test.v1' else self.policy['seed'])
         self.git(identifier, deadline, 'clone', '--no-hardlinks', '--no-local', '--no-checkout',
-                 self.policy['seed'], str(workspace))
+                 seed, str(workspace))
         self.git(identifier, deadline, '-C', str(workspace), 'checkout', '-b',
                  'builder/' + identifier, record['request']['base_ref'])
         self.git(identifier, deadline, '-C', str(workspace), 'remote', 'remove', 'origin')
@@ -100,6 +103,10 @@ class Runner:
                                            branch='builder/' + identifier)
             if record['status'] in TERMINAL:
                 return True
+            coding = record['request']['task_type'] == 'coding.patch-test.v1'
+            if coding and not self.policy.get('coding_enabled', False):
+                self.store.transition(identifier, 'blocked', 'coding_not_enabled')
+                return True
             if shutil.disk_usage(self.store.root).free < self.policy['min_free_bytes']:
                 self.store.transition(identifier, 'blocked', 'insufficient_storage')
                 return True
@@ -108,7 +115,12 @@ class Runner:
             record = self.store.transition(identifier, 'running', 'sandbox_starting', started_at=timestamp())
             if record['status'] in TERMINAL:
                 return True
-            status, code = self.executor(workspace, artifacts, deadline,
+            if coding:
+                from .coding_execute import execute as coding_execute
+                status, code = coding_execute(record['request'], workspace, artifacts,
+                                               lambda: self.guard(identifier, deadline))
+            else:
+                status, code = self.executor(workspace, artifacts, deadline,
                                          lambda: self.store.load(identifier)['cancel_requested'],
                                          self.stopping, Path(__file__).with_name('work_fixture.py'))
             if self.stopping():

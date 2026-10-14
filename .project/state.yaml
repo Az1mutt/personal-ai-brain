@@ -6,53 +6,39 @@ project:
   owner: "Project OS & Agent Architecture chat"
 
 status: "active"
-phase: "remote-work-submission-v01-externally-accepted"
+phase: "credentialless-coding-agent-broker-v01-accepted"
 
 current_gate: >
-  Remote Work Submission v0.1 is externally accepted end-to-end from this project
-  ChatGPT chat through the private GitHub Issues transport to the Homelab Work
-  Runner and back to correlated terminal status. Whole-host reboot remains pending
-  and outside this milestone. No model backend, task GitHub publication or broader
-  execution capability is authorized; a new implementation milestone requires
-  separate approval.
+  Credentialless Coding Agent Broker v0.1 foundation is accepted as its own
+  milestone. Live provider and coding gates remain disabled. Real Ollama/local
+  inference, paid OpenAI acceptance, provider routing/escalation, autonomous
+  GitHub publication and deployment automation are not completed or enabled.
 
 current_state: >
-  The existing private GitHub Issues transport now exposes strictly typed
-  work.submit, work.status and work.cancel alongside the unchanged six read-only
-  capabilities. The existing Issues credential is reused without new scope.
-  Control hands off only the fixed Work Runner fixture contract through a bounded
-  atomic inbox/outbox. Runner independently validates admission; task UUID/payload
-  hash remains the execution idempotency boundary and control request UUID remains
-  the invocation boundary. Submit waits at most two seconds for a response and
-  reports durable handoff pending honestly; status returns only sanitized fields.
-  The control container cannot access builder state/workspaces/publication token.
-  Builder retains UID 999/GID 982 only, no sudo, no control token/audit access.
-  One receiver child handles cancellation while the single worker executes.
-  Task sandboxes see neither transport side, credentials, network nor Docker.
-  All 174 tests passed, including original read-only control regressions.
-  Live internal Issues #32-39 verified submit, identical duplicate, payload
-  conflict rejection, unsupported task rejection, succeeded status and running
-  cancellation followed by cancelled status. Administrative checks verified actual
-  identity boundaries, all 18 sandbox checks, pending handoff through control
-  restart and builder interruption without replay. Deployed code matches merged
-  source; builder is active and control transport healthy. The existing durable
-  deployment checkout was fast-forwarded; only builder/control were updated.
-  Core and Media services were not redeployed. Review branches/worktree were
-  removed. External ChatGPT-originated acceptance was independently completed on
-  2026-10-11 through private Issues #40 and #41. Issue #40 submitted task
-  d297f109-8a4c-4020-9572-9d84243a46a8 with correlated request
-  7ce4ff95-eceb-46d4-81b2-cd4c64324640 and closed after durable admission.
-  Issue #41 queried the same task with correlated request
-  4160f427-1438-4897-9b57-cdda82a0cfc7 and closed with terminal succeeded,
-  attempts=1 and artifacts_retained=true. No model, task publisher, listener,
-  remote shell/filesystem API or deployment capability was added. Media remains
-  parked and out of scope.
+  Recovered exact checkpoint c3df34fef37df23711b94751255e9ea482c75779 and its
+  parent 83a54fe from the existing Homelab worktree, preserving local recovery
+  branch and complete-history bundles. Replayed the original documentation
+  prerequisite and both broker commits onto main 667a6ef without conflicts;
+  all three range-diff entries are equivalent. Current Codex execution architecture
+  v1 and environment/CI changes remain intact. The trusted inference broker,
+  four mediated workspace operations, deterministic validation/offline tests,
+  budget reservations and no-silent-replay durability are credentiallessly accepted.
+  All 235 Python tests and separate offline PowerShell environment checks passed.
+  On 2026-10-13 read-only runtime verification found 17 root-owned broker/runner
+  modules and the unit text equivalent under the historical transfer normalization;
+  stored live acceptance evidence matches the committed receipt. Builder/broker
+  remain active/enabled with private networks, no new privileges and empty
+  capability bounds. Broker denies all IP traffic; provider is disabled and
+  coding_enabled is false. Historical actual-identity and failure acceptance is
+  retained, not rerun. No new deployment, restart, API key or inference occurred.
+  Existing externally accepted Remote Work Submission and read-only Core/control
+  behavior remain covered by regression tests. Media remains parked and unchanged.
 
 exact_next_action: >
-  Stop at the externally accepted Remote Work Submission v0.1 boundary and await
-  a separately approved next implementation milestone. Keep whole-host reboot
-  acceptance for a suitable maintenance window; do not add model integration,
-  autonomous GitHub publication or broader execution powers implicitly.
+  Local LLM Provider v0.1 — Ollama feasibility and real coding acceptance.
+  Start with live hardware feasibility in local-homelab-admin before selecting or
+  installing a model. Keep paid OpenAI, provider routing, autonomous publication
+  and deployment automation deferred to separately approved milestones.
 
 blockers: []
 
@@ -82,14 +68,15 @@ important_open_loops:
 portfolio:
   milestone: true
   signal: >
-    Authorized private Issues callers can submit the fixed local fixture, query
-    durable task truth and cancel without SSH. Independent ChatGPT connector
-    acceptance is complete through correlated submit/status Issues #40 and #41.
-    Execution remains offline, credential-free and bounded; Media remains parked.
+    Credentialless broker foundation is accepted with exact recovery provenance,
+    mediated tools and independent offline validation. Real-provider acceptance
+    remains pending; live coding/provider gates stay disabled.
 
 verification:
-  last_verified: "2026-10-11"
+  last_verified: "2026-10-13"
   sources:
+    - 'docs/CODING_BROKER_CHECKPOINT.md: exact recovery, current-main replay equivalence, 235 tests and bounded read-only runtime revalidation on 2026-10-13.'
+    - 'docs/credentialless-broker-evidence.json: historical credentialless acceptance; unchanged live receipt verified 2026-10-13.'
     - "2026-10-12 Cloud validation: both repositories and AGENTS.md available; Git, Python/pytest/PyYAML and Node available; PowerShell installed outside default PATH. No user SSH directory, agent socket or explicit homelab configuration found; no administrative credential intentionally present. See config/codex/environment-manifest.yaml and docs/codex-environments.md for acceptance warnings."
     - "2026-10-12 conservative cleanup: verified duplicate homelab/media checkouts removed; redundant old runner worktree and stale Linux registration removed; two historical reflog commits preserved under local canonical refs. Non-secret bootstrap source archived; credential consumers and diagnostic remain preserved."
     - "2026-10-12 local environment setup: canonical repositories, byte-identical preservation of six media files, global policy, offline script tests and local-homelab-admin PASS_WITH_WARNINGS. Existing runtime acceptance was not re-run."
