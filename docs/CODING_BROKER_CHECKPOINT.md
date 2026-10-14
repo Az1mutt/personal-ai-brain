@@ -1,13 +1,47 @@
 # Coding broker checkpoint — credentialless acceptance complete
 
-2026-10-11. Continue on `feat/coding-agent-broker-v01` in
-`/tmp/pab-coding-agent-preflight` on Homelab. The branch includes `83a54fe`;
-final checkpoint SHA is reported in the handoff. Do not repeat reconciliation,
-architecture or the completed credentialless acceptance.
+## Current integration and milestone decision — 2026-10-13
+
+Credentialless Coding Agent Broker v0.1 is approved as a standalone foundation
+milestone. Real Ollama/OpenAI acceptance is not its merge gate. Runtime gates
+remain disabled; no real provider, router, autonomous publisher or deployment
+automation is accepted by this milestone.
+
+Exact checkpoint `c3df34fef37df23711b94751255e9ea482c75779` was recovered from the
+clean Homelab linked worktree `/tmp/pab-coding-agent-preflight`, owned by the
+Personal AI Brain common Git directory. Its direct parent is `83a54fe` and its
+recorded base is `cde8c424b687c3ef99b98e4764da4a67c973d8b2`. Complete-history
+bundles and local `recovery/coding-agent-broker-c3df34f` preserve that exact history.
+
+Integration starts at main `667a6ef4ded87d65a8e3d920e7c6898f4dac0efe` on
+`feat/coding-agent-broker-v01-integration`. The original documentation prerequisite
+`9268c25` and broker commits `83a54fe`, `c3df34f` replay as `6746350`, `51c9386`,
+`06e12a5`. All three range-diff entries are equal; no conflicts or implementation
+changes occurred. Current-main environment, policy, CI and state changes remain.
+
+Validation: 235 Linux tests passed; the count matches recovery because main added
+separate PowerShell environment checks, which also passed. Whitespace checks and
+a bounded tracked-secret scan passed. Read-only live revalidation confirmed all
+17 installed broker/runner modules and the broker unit match after the historical
+transfer's text/trailing-whitespace normalization, with root-owned non-writable
+modules. The stored acceptance receipt matches committed evidence. Builder and
+broker are active/enabled with private networks, no new privileges and empty
+capability bounds. Broker IP deny-all remains effective; provider and coding gates
+are disabled. No deployment, restart, new inference or destructive acceptance
+probe was needed. Historical identity/sandbox evidence below is reused, not
+represented as freshly rerun. The checkpoint date below predates the final commit,
+which was created on 2026-10-12.
+
+Next milestone: **Local LLM Provider v0.1 — Ollama feasibility and real coding
+acceptance**. Paid OpenAI acceptance and external ChatGPT coding acceptance remain
+separate pending work. Prepared owner credential procedures are retained.
+
+## Historical checkpoint — 2026-10-11/12
 
 Read current `AGENTS.md`, `.project/state.yaml`, `coding-agent-backend-v01.md`
-and `credentialless-broker-acceptance.md`. No PR, push or merge has occurred.
-Real API acceptance remains the milestone's merge gate. Project State is unchanged.
+and `credentialless-broker-acceptance.md`. At this checkpoint no PR, push or merge
+had occurred and Project State was unchanged. Its former real-API merge gate is
+superseded by the foundation milestone decision above.
 
 ## Verified live state
 
@@ -54,7 +88,7 @@ Runtime/seed are root-owned at the existing builder prefix; state remains under
 LLM framework, persistent administrative control channel or privileged agent was
 introduced. The one-time root systemd bootstrap job was collected after exit.
 
-## Only remaining owner phase
+## Deferred OpenAI owner phase
 
 The owner deliberately postponed OpenAI setup. Do not ask for a key now.
 When the owner chooses to proceed:
@@ -72,8 +106,8 @@ When the owner chooses to proceed:
    task policy/180-second deadline, retains the sealed patch/test/result, then
    restores provider/network denial. Re-running cannot create another paid task.
    Pricing policy expires closed after 2026-11-10 and needs review after that date.
-4. Only after real internal acceptance complete administrative PR/CI/merge and
-   deployment closure per AGENTS. Sync Project State then and prepare a fresh
+4. After real internal acceptance complete that separate provider milestone's
+   administrative PR/CI/merge and deployment closure per AGENTS. Sync its state and prepare a fresh
    external ChatGPT coding submit/status handoff, explicitly still pending.
 
 No GitHub publication capability belongs to task code. No builder PAT was used.

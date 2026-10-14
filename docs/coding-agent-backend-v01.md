@@ -2,8 +2,10 @@
 
 Owner-approved Responses broker decision, 2026-10-11. Credentialless deployment and isolation acceptance complete;
 real model/API acceptance remains pending. Codex CLI and self-hosted Agents are not
-used. No framework or dependency added. Project State still records the last
-verified remote-fixture milestone.
+used. No framework or dependency added. On 2026-10-13 the owner approved the
+credentialless foundation as a standalone milestone; see
+`CODING_BROKER_CHECKPOINT.md` for recovery and current-main integration evidence.
+Ollama/local and paid OpenAI provider acceptance remain separate pending milestones.
 
 ## Boundaries and paths
 

@@ -1,9 +1,11 @@
 # Credentialless broker deployment and isolation acceptance
 
 Continuation of `83a54fe`, same Change/Review branch. No OpenAI project, API key,
-billing change or real API request is permitted in this slice. Do not merge until
-the approved milestone's real API acceptance gate passes. Project State must not
-claim real model completion.
+billing change or real API request is permitted in this slice. On 2026-10-13 the
+owner approved this credentialless foundation as a standalone mergeable milestone;
+real provider acceptance is a separate gate. Project State must not claim real
+model completion. Recovery, reconciliation and current validation are recorded in
+`CODING_BROKER_CHECKPOINT.md`.
 
 ## Operator gate and acceptance adapter
 
@@ -89,6 +91,6 @@ tiny normalization module. It retains the patch and tests, never publishes GitHu
 content, and restores disabled provider/network denial afterward. An interrupted
 or failed paid attempt requires explicit review, not automatic regeneration.
 
-After genuine API acceptance, the existing administrative PR/CI/merge/deployment
-closure remains required. External ChatGPT coding acceptance is still independent
+After genuine API acceptance, that separate provider milestone's administrative
+PR/CI/merge/deployment closure remains required. External ChatGPT coding acceptance is still independent
 and pending. Media, reboot, planner/router and additional repositories are excluded.
